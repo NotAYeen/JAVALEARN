@@ -94,12 +94,27 @@ export function validarEstructura(misiones) {
 /* Ejecucion con el JDK real                                                   */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Normaliza una salida para poder compararla con la esperada.
+ *
+ * Tres reglas, y las tres son decisiones pedagogicas:
+ *
+ * 1. Los finales de linea de Windows se unifican en `\n`. Sin esto, la misma
+ *    solucion daria fallos distintos en cada sistema.
+ * 2. Se quitan los espacios al final de cada linea. El alumno no los escribe
+ *    en la leccion, asi que no deben decidir si su solucion es correcta.
+ * 3. Se quitan los saltos de linea del final. El ultimo `println` anade uno
+ *    siempre, pero el texto esperado se escribe sin el: el alumno espera ver
+ *    `Hola, mundo`, no `Hola, mundo` seguido de un salto invisible. Comparar
+ *    ese caracter obligaria a escribir `\\n` en cada salida esperada, que
+ *    ensuciaria el contenido sin aportar precision.
+ */
 export function normalizar(salida) {
   return String(salida ?? '')
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
     .replace(/[ \t]+$/gm, '')
-    .replace(/\n+$/, '\n');
+    .replace(/\s+$/, '');
 }
 
 export function jdkDisponible() {

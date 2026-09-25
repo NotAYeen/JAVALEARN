@@ -87,6 +87,19 @@ function servir() {
 
 const MOVIL = { width: 360, height: 640 };
 
+/**
+ * Rutas que se auditan. No basta con comprobar la portada: los enlaces, los
+ * botones de las tarjetas y los bloques desplegables solo existen dentro de las
+ * vistas, y son justo los que se rompen con mas facilidad.
+ */
+const RUTAS = [
+  { hash: '#/', nombre: 'portada' },
+  { hash: '#/unidad/fundamentos', nombre: 'unidad' },
+  { hash: '#/mision/fundamentos-01', nombre: 'leccion' },
+  { hash: '#/mision/fundamentos-03', nombre: 'leccion-con-tabla' },
+  { hash: '#/ruta-inventada', nombre: 'error' },
+];
+
 async function principal() {
   if (!existsSync(DIST)) {
     console.error('No existe dist/. Ejecuta antes: npm run build');
@@ -100,97 +113,128 @@ async function principal() {
   const navegador = await abrirNavegador(process.argv.includes('--headed'));
 
   const problemas = [];
-  let resumenAxe = { violaciones: 0, entradas: [] };
+  let violacionesAxe = 0;
+  const entradasAxe = [];
 
   try {
-    for (const [nombre, opciones] of [
+    for (const [dispositivo, opciones] of [
       ['escritorio', { viewport: { width: 1280, height: 900 } }],
       ['movil', { viewport: MOVIL, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }],
     ]) {
       const contexto = await navegador.newContext(opciones);
       const pagina = await contexto.newPage();
-      await pagina.goto(base, { waitUntil: 'networkidle' });
+      const fuenteAxe = readFileSync(join(RAIZ, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
 
-      /* Contraste y semantica, ya con diseno real calculado. */
-      await pagina.addScriptTag({ content: readFileSync(join(RAIZ, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8') });
-      const axe = await pagina.evaluate(async () => {
-        const r = await window.axe.run(document, {
-          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice'] },
+      for (const ruta of RUTAS) {
+        const donde = `${dispositivo}/${ruta.nombre}`;
+        await pagina.goto(base + ruta.hash, { waitUntil: 'networkidle' });
+
+        /* axe se inyecta despues de cada navegacion: goto crea un contexto
+           nuevo y se lleva por delante lo que se hubiera inyectado antes. */
+        await pagina.addScriptTag({ content: fuenteAxe });
+
+        /* Contraste y semantica, ya con diseno real calculado. */
+        const axe = await pagina.evaluate(async () => {
+          const r = await window.axe.run(document, {
+            runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice'] },
+          });
+          return r.violations.map((v) => ({ id: v.id, impacto: v.impact, ayuda: v.help, nodos: v.nodes.length }));
         });
-        return r.violations.map((v) => ({ id: v.id, impacto: v.impact, ayuda: v.help, nodos: v.nodes.length }));
-      });
 
-      if (axe.length > 0) {
-        resumenAxe.violaciones += axe.length;
-        resumenAxe.entradas.push({ nombre, axe });
-      }
+        if (axe.length > 0) {
+          violacionesAxe += axe.length;
+          entradasAxe.push({ donde, axe });
+        }
 
-      /* Sin desbordamiento horizontal en movil. */
-      const desborde = await pagina.evaluate(() => ({
-        scroll: document.documentElement.scrollWidth,
-        visible: window.innerWidth,
-      }));
-      if (desborde.scroll > desborde.visible + 1) {
-        problemas.push(`${nombre}: hay scroll horizontal (${desborde.scroll} px de contenido en ${desborde.visible} px visibles)`);
-      }
+        /* Sin desbordamiento horizontal. */
+        const desborde = await pagina.evaluate(() => ({
+          scroll: document.documentElement.scrollWidth,
+          visible: window.innerWidth,
+        }));
+        if (desborde.scroll > desborde.visible + 1) {
+          problemas.push(
+            `${donde}: hay scroll horizontal (${desborde.scroll} px de contenido en ${desborde.visible} px visibles)`,
+          );
+        }
 
-      /* El texto no puede bajar de 16 px: por debajo, iOS hace zoom al enfocar. */
-      const tamanoTexto = await pagina.evaluate(() => {
-        const estilos = getComputedStyle(document.body);
-        return parseFloat(estilos.fontSize);
-      });
-      if (tamanoTexto < 16) {
-        problemas.push(`${nombre}: el texto base mide ${tamanoTexto} px; debe ser 16 px o mas`);
-      }
+        /* El texto no puede bajar de 16 px: por debajo, iOS hace zoom al enfocar. */
+        const tamanoTexto = await pagina.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize));
+        if (tamanoTexto < 16) {
+          problemas.push(`${donde}: el texto base mide ${tamanoTexto} px; debe ser 16 px o mas`);
+        }
 
-      /* Objetivos tactiles de 44x44 en los controles visibles.
-         WCAG 2.2 (2.5.8) solo exige 24x24 y exime a los enlaces insertados
-         dentro de un texto corrido, pero aqui se pide 44x44 para todo lo
-         demas. La excepcion se aplica de forma explicita para que el
-         comprobante no senale los enlaces de un parrafo. */
-      const pequenos = await pagina.evaluate(() => {
-        const medidos = [];
-        for (const nodo of document.querySelectorAll('button, a[href], input, select, textarea')) {
-          const estilos = getComputedStyle(nodo);
-          const padre = nodo.parentElement;
-          const padreEsTexto =
-            padre &&
-            estilos.display === 'inline' &&
-            ['P', 'LI', 'SPAN', 'TD'].includes(padre.tagName) &&
-            (padre.textContent ?? '').trim().length > (nodo.textContent ?? '').trim().length + 2;
+        /* Objetivos tactiles de 44x44 en los controles visibles.
+           WCAG 2.2 (2.5.8) solo exige 24x24 y exime a los enlaces insertados
+           dentro de un texto corrido, pero aqui se pide 44x44 para todo lo
+           demas. La excepcion se aplica de forma explicita para que el
+           comprobante no senale los enlaces de un parrafo. */
+        const pequenos = await pagina.evaluate(() => {
+          const medidos = [];
+          for (const nodo of document.querySelectorAll('button, a[href], input, select, textarea, summary')) {
+            const estilos = getComputedStyle(nodo);
+            const padre = nodo.parentElement;
+            const padreEsTexto =
+              padre &&
+              estilos.display === 'inline' &&
+              ['P', 'LI', 'SPAN', 'TD'].includes(padre.tagName) &&
+              (padre.textContent ?? '').trim().length > (nodo.textContent ?? '').trim().length + 2;
 
-          if (padreEsTexto) continue;
+            if (padreEsTexto) continue;
 
-          const caja = nodo.getBoundingClientRect();
-          if (caja.width === 0 || caja.height === 0) continue;
-          if (caja.width < 44 || caja.height < 44) {
-            medidos.push({
-              etiqueta: (nodo.textContent ?? nodo.tagName).trim().slice(0, 40),
-              ancho: Math.round(caja.width),
-              alto: Math.round(caja.height),
-            });
+            const caja = nodo.getBoundingClientRect();
+            if (caja.width === 0 || caja.height === 0) continue;
+            if (caja.width < 44 || caja.height < 44) {
+              medidos.push({
+                etiqueta: (nodo.textContent ?? nodo.tagName).trim().slice(0, 40),
+                ancho: Math.round(caja.width),
+                alto: Math.round(caja.height),
+              });
+            }
+          }
+          return medidos;
+        });
+        for (const p of pequenos) {
+          problemas.push(`${donde}: objetivo tactil de ${p.ancho}x${p.alto} px en "${p.etiqueta}" (se exigen 44x44)`);
+        }
+
+        /* Tras navegar, el foco tiene que estar en el titulo de la vista y no
+           en un enlace que ya no existe. */
+        const foco = await pagina.evaluate(() => {
+          const activo = document.activeElement;
+          if (!activo) return { etiqueta: null, esTitulo: false, tieneAnillo: false };
+          const esTitulo = activo.tagName === 'H1';
+          const estilos = getComputedStyle(activo);
+          return {
+            etiqueta: (activo.textContent ?? activo.tagName).trim().slice(0, 40),
+            esTitulo,
+            tieneAnillo: esTitulo || estilos.outlineStyle !== 'none',
+          };
+        });
+        if (foco.etiqueta && !foco.tieneAnillo) {
+          problemas.push(`${donde}: el foco quedo en "${foco.etiqueta}" y no se ve`);
+        }
+
+        /* La tabla de la leccion 3 debe tener su propio scroll, no empujar la
+           pagina entera: en un movil de 360 px una tabla de tres columnas se
+           sale si no esta encerrada. */
+        if (ruta.nombre === 'leccion-con-tabla') {
+          const tabla = await pagina.evaluate(() => {
+            const envoltura = document.querySelector('.tabla-envoltorio');
+            if (!envoltura) return null;
+            return {
+              desborda: envoltura.scrollWidth > envoltura.clientWidth,
+              overflow: getComputedStyle(envoltura).overflowX,
+            };
+          });
+          if (tabla && tabla.overflow !== 'auto' && tabla.overflow !== 'scroll') {
+            problemas.push(`${donde}: la tabla no tiene scroll propio (overflow-x: ${tabla.overflow})`);
           }
         }
-        return medidos;
-      });
-      for (const p of pequenos) {
-        problemas.push(`${nombre}: objetivo tactil de ${p.ancho}x${p.alto} px en "${p.etiqueta}" (se exigen 44x44)`);
+
+        await pagina.screenshot({ path: join(SALIDA, `${dispositivo}-${ruta.nombre}.png`), fullPage: true });
       }
 
-      /* El foco tiene que verse: comprobamos que el anillo no es transparente. */
-      const foco = await pagina.evaluate(() => {
-        const boton = document.querySelector('button');
-        if (!boton) return null;
-        boton.focus();
-        const estilos = getComputedStyle(boton, null);
-        return { contorno: estilos.outlineStyle, grosor: estilos.outlineWidth };
-      });
-      if (foco && (foco.contorno === 'none' || parseFloat(foco.grosor) === 0)) {
-        problemas.push(`${nombre}: el primer boton no muestra anillo de foco`);
-      }
-
-      await pagina.screenshot({ path: join(SALIDA, `${nombre}.png`), fullPage: true });
-      console.log(`  ${nombre.padEnd(10)} auditado y capturado en tmp/auditoria/${nombre}.png`);
+      console.log(`  ${dispositivo.padEnd(10)} ${RUTAS.length} rutas auditadas`);
       await contexto.close();
     }
   } finally {
@@ -199,14 +243,14 @@ async function principal() {
   }
 
   console.log('');
-  if (resumenAxe.violaciones > 0) {
-    for (const entrada of resumenAxe.entradas) {
+  if (violacionesAxe > 0) {
+    for (const entrada of entradasAxe) {
       for (const v of entrada.axe) {
-        problemas.push(`${entrada.nombre}: axe ${v.id} (${v.impacto}) — ${v.ayuda} (${v.nodos} nodo/s)`);
+        problemas.push(`${entrada.donde}: axe ${v.id} (${v.impacto}) — ${v.ayuda} (${v.nodos} nodo/s)`);
       }
     }
   } else {
-    console.log('axe con diseno real: 0 violaciones, incluido el contraste de texto.');
+    console.log(`axe con diseno real: 0 violaciones en ${RUTAS.length * 2} combinaciones de vista, incluido el contraste.`);
   }
 
   console.log('');

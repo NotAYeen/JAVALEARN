@@ -157,3 +157,72 @@ describe('auditoria automatica con axe', () => {
     expect(resumen).toEqual([]);
   }, 30000);
 });
+
+/**
+ * Las mismas comprobaciones sobre las demas vistas.
+ *
+ * La portada sola no basta: los enlaces de las tarjetas, la lista de misiones y
+ * los bloques desplegables de la leccion solo existen dentro de sus vistas, y
+ * son justo donde se cuela un fallo sin avisar. En el navegador, ademas, esto lo
+ * comprueba scripts/auditar-navegador.mjs sobre la build real.
+ */
+describe('vistas con contenido', () => {
+  const VISTAS = [
+    { hash: '#/unidad/fundamentos', nombre: 'lista de misiones' },
+    { hash: '#/mision/fundamentos-01', nombre: 'leccion' },
+    { hash: '#/mision/fundamentos-02', nombre: 'leccion con tabla' },
+    { hash: '#/mision/fundamentos-04', nombre: 'leccion completa' },
+    { hash: '#/ruta-que-no-existe', nombre: 'pagina no encontrada' },
+  ];
+
+  async function irA(hash) {
+    window.location.hash = hash;
+    /* jsdom no siempre dispara hashchange al cambiar el hash, asi que se
+       provoca a mano lo mismo que haria el navegador. */
+    window.dispatchEvent(new window.HashChangeEvent('hashchange'));
+  }
+
+  it.each(VISTAS)('$nombre no tiene violaciones de axe', async ({ hash }) => {
+    await irA(hash);
+    const resultados = await axe.run(document, {
+      resultTypes: ['violations'],
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
+    });
+    expect(resultados.violations.map((v) => v.id)).toEqual([]);
+  }, 30000);
+
+  it('las zonas de codigo con scroll son alcanzables con teclado', async () => {
+    await irA('#/mision/fundamentos-01');
+    const zonas = [...document.querySelectorAll('.codigo, .salida__texto, .tabla-envoltorio')];
+    expect(zonas.length).toBeGreaterThan(0);
+    for (const zona of zonas) {
+      // Sin tabindex="0" ni nombre accesible, quien navega con teclado no puede
+      // desplazar el bloque: es el fallo que encontro la auditoria de navegador.
+      expect(zona.getAttribute('tabindex'), `sin tabindex: ${zona.className}`).toBe('0');
+      expect(zona.getAttribute('role')).toBe('region');
+      expect(zona.getAttribute('aria-label')).toBeTruthy();
+    }
+  });
+
+  it('el foco va al titulo de la vista al navegar', async () => {
+    await irA('#/mision/fundamentos-03');
+    expect(document.activeElement).toBe(document.querySelector('main h1'));
+    expect(document.activeElement.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('anuncia la vista nueva en la region suave', async () => {
+    await irA('#/mision/fundamentos-01');
+    await new Promise((r) => setTimeout(r, 120));
+    expect(document.getElementById('region-polite').textContent).toContain('primer programa');
+  });
+
+  it('no baja la opacidad para marcar lo que no esta disponible', async () => {
+    await irA('#/');
+    const vacias = [...document.querySelectorAll('.tarjeta-unidad--vacia')];
+    expect(vacias.length).toBeGreaterThan(0);
+    const css = readFileSync(join(RAIZ, 'css', 'style.css'), 'utf8');
+    // La forma de marcar "todavia no" es el borde y el texto, nunca la
+    // opacidad: atenua el texto y hunde el contraste por debajo de 4.5:1.
+    expect(css).not.toMatch(/\.tarjeta-unidad--vacia\s*\{[^}]*opacity/);
+  });
+});

@@ -27,7 +27,7 @@ export function anunciar(mensaje) {
 }
 
 /** Anuncio urgente: errores que impiden continuar. */
-export function urgently(mensaje) {
+export function urgentemente(mensaje) {
   escribir(region('region-urgente'), mensaje);
 }
 

@@ -1,67 +1,87 @@
-import { TOTAL_MISIONES, UNIDADES } from './data/unidades.js';
-import { anunciar, escapar } from './ui/anuncios.js';
+import { UNIDADES } from './data/unidades.js';
+import { buscarMision, misionesDeUnidad } from './data/misiones.js';
+import { anunciar } from './ui/anuncios.js';
 import { iniciarTema } from './ui/tema.js';
+import { RUTAS, iniciarRuta } from './ui/ruta.js';
+import { vistaMision, vistaNoEncontrada, vistaPortada, vistaUnidad } from './ui/vistas.js';
 
 /**
  * Monta la aplicacion.
  *
- * En esta fase la interfaz es el armazon: estructura, tema y hoja de ruta.
- * Las misiones y el editor llegan en fases posteriores, pero todo lo que hay
- * aqui se construye ya con teclado y con lector de pantalla en mente, para no
- * acumular deuda de accesibilidad.
+ * Aqui no se pinta nada directamente: se resuelve la ruta, se pide la cadena
+ * de HTML a la vista correspondiente y se decide donde va el foco. Que el
+ * gestion de foco este en un unico sitio es lo que evita el fallo clasico de
+ * las SPAs: navegar y que el foco se quede en un enlace que ya no existe,
+ * dejando a quien navega con teclado sin saber donde esta.
  */
 export function montar({ raiz, botonTema }) {
-  raiz.innerHTML = vistaBienvenida();
   iniciarTema(botonTema);
-  anunciar(`JavaLearn listo. Hoja de ruta de ${UNIDADES.length} unidades cargada.`);
+  iniciarRuta((ruta) => pintarRuta(raiz, ruta));
 }
 
-function vistaBienvenida() {
-  return `
-    <h1>Java, desde el primer <code>println</code></h1>
+function pintarRuta(raiz, ruta) {
+  const { html, titulo } = construir(ruta);
 
-    <p class="intro">
-      Una ruta para aprender Java de cero a nivel intermedio. Escribes codigo real,
-      lo ejecutas aqui mismo y recibes los errores explicados en castellano, no en
-      ingles de maquina. Funciona en el movil y no necesita instalar nada.
-    </p>
-
-    <div class="panel panel--aviso">
-      <p class="panel__titulo"><span aria-hidden="true">&#9888;</span> Que es este entorno</p>
-      <p>
-        JavaLearn ejecuta Java con un interprete propio escrito en JavaScript, no con
-        una maquina virtual de Java completa. Implementa el subconjunto de Java 8 que
-        necesitan estas misiones, y lo hace <strong>mucho mas rapido</strong> que cargar
-        un compilador entero en un movil. Cuando escribas algo que todavia no soporta,
-        el aviso te lo dira con claridad.
-      </p>
-      <p>
-        Cada solucion se contrasta contra el <code>javac</code> real antes de publicarse,
-        de modo que lo que ves aqui se comporta como Java de verdad.
-      </p>
-    </div>
-
-    <h2>El recorrido</h2>
-    <p>
-      ${UNIDADES.length} unidades y ${TOTAL_MISIONES} misiones, con seis formas distintas de
-      practicar: leer, escribir en la terminal, depurar, auditar, ensamblar y relacionar.
-    </p>
-
-    <ol class="rejilla lista-unidades">
-      ${UNIDADES.map(tarjetaUnidad).join('\n      ')}
-    </ol>
-  `;
+  raiz.innerHTML = html;
+  raiz.scrollTop = 0;
+  window.scrollTo(0, 0);
+  moverFocoAlTitulo();
+  anunciar(titulo);
+  document.title = `${titulo} · JavaLearn`;
 }
 
-function tarjetaUnidad(u) {
-  return `
-        <li class="tarjeta tarjeta-unidad">
-          <p class="tarjeta-unidad__numero">${u.numero}</p>
-          <h3 class="tarjeta-unidad__titulo">${escapar(u.titulo)}</h3>
-          <p class="tarjeta-unidad__resumen">${escapar(u.resumen)}</p>
-          <p class="tarjeta-unidad__pie">
-            <span class="etiqueta etiqueta--pendiente">En preparacion</span>
-            <span class="tarjeta-unidad__misiones">${u.misiones} misiones</span>
-          </p>
-        </li>`;
+/**
+ * Devuelve el HTML y el texto que se anuncia y va al titulo del navegador.
+ *
+ * Es una funcion pura a proposito: la decision de que pintar se prueba sin
+ * DOM, que es donde se concentran los casos raros.
+ */
+export function construir(ruta) {
+  switch (ruta.tipo) {
+    case RUTAS.PORTADA:
+      return { html: vistaPortada(), titulo: 'Portada' };
+
+    case RUTAS.UNIDAD: {
+      const unidad = UNIDADES.find((u) => u.id === ruta.id);
+      if (!unidad) return construir({ tipo: RUTAS.NO_ENCONTRADA });
+      return { html: vistaUnidad(unidad), titulo: `Unidad ${unidad.numero}. ${unidad.titulo}` };
+    }
+
+    case RUTAS.MISION: {
+      const mision = buscarMision(ruta.id);
+      if (!mision) return construir({ tipo: RUTAS.NO_ENCONTRADA });
+
+      const unidad = UNIDADES.find((u) => u.id === mision.unidad);
+      if (!unidad) return construir({ tipo: RUTAS.NO_ENCONTRADA });
+
+      const hermanas = misionesDeUnidad(unidad.id);
+      const indice = hermanas.findIndex((m) => m.id === mision.id);
+
+      return {
+        html: vistaMision(mision, unidad, {
+          anterior: indice > 0 ? hermanas[indice - 1] : null,
+          siguiente: indice >= 0 && indice < hermanas.length - 1 ? hermanas[indice + 1] : null,
+        }),
+        titulo: mision.titulo,
+      };
+    }
+
+    case RUTAS.NO_ENCONTRADA:
+    default:
+      return { html: vistaNoEncontrada(), titulo: 'Pagina no encontrada' };
+  }
+}
+
+/**
+ * Lleva el foco al titulo de la vista.
+ *
+ * El h1 lleva tabindex="-1" precisamente para esto: sin el, un encabezado no
+ * es un destino de foco valido y el foco se quedaria donde estaba, que es un
+ * enlace que acaba de desaparecer del DOM.
+ */
+function moverFocoAlTitulo() {
+  const titulo = document.querySelector('main h1');
+  if (!titulo) return;
+  titulo.setAttribute('tabindex', '-1');
+  titulo.focus({ preventScroll: true });
 }

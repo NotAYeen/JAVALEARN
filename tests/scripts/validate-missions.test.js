@@ -11,15 +11,30 @@ const conJdk = HAY_JDK ? it : it.skip;
 
 describe('normalizacion de salida', () => {
   it('convierte CRLF en LF', () => {
-    expect(normalizar('a\r\nb\r\n')).toBe('a\nb\n');
+    expect(normalizar('a\r\nb')).toBe('a\nb');
   });
 
   it('quita espacios al final de linea', () => {
-    expect(normalizar('a   \nb\t\n')).toBe('a\nb\n');
+    expect(normalizar('a   \nb\t')).toBe('a\nb');
   });
 
-  it('deja una sola quebra final', () => {
-    expect(normalizar('a\n\n\n')).toBe('a\n');
+  /* El ultimo println de un programa siempre anade un salto de linea. El texto
+     esperado se escribe sin el, asi que comparar el salto final obligaria a
+     escribir \n en cada salida esperada de la leccion. */
+  it('quita los saltos de linea del final', () => {
+    expect(normalizar('a\n\n\n')).toBe('a');
+    expect(normalizar('Hola, mundo\n')).toBe('Hola, mundo');
+  });
+
+  it('conserva los saltos de linea del interior', () => {
+    expect(normalizar('uno\ndos\ntres\n')).toBe('uno\ndos\ntres');
+  });
+
+  it('hace equivalentes las dos formas de escribir la misma salida esperada', () => {
+    // Esta es la relacion que hace que la validacion no sea fragil: como se
+    // compara siempre a traves de normalizar, da igual si la solucion acaba
+    // en println o en print.
+    expect(normalizar('Hola, mundo\n')).toBe(normalizar('Hola, mundo'));
   });
 
   it('tolera undefined', () => {
@@ -110,7 +125,7 @@ describe('contraste contra el JDK real', () => {
 
     const r = ejecutarConJdk(fuente);
     expect(r.ok).toBe(true);
-    expect(r.salida).toBe('Hola, mundo\n3\n');
+    expect(r.salida).toBe('Hola, mundo\n3');
   });
 
   conJdk('respeta los acentos y la ñ sin romperse', () => {
@@ -124,7 +139,7 @@ describe('contraste contra el JDK real', () => {
 
     const r = ejecutarConJdk(fuente);
     expect(r.ok).toBe(true);
-    expect(r.salida).toBe('El señor González comió ñoño áéíóú\n');
+    expect(r.salida).toBe('El señor González comió ñoño áéíóú');
   });
 
   conJdk('devuelve un error de compilacion con diagnostico de javac', () => {
@@ -161,7 +176,7 @@ describe('contraste contra el JDK real', () => {
     ].join('\n');
 
     const r = ejecutarConJdk(fuente, ['hola']);
-    expect(r.salida).toBe('1:hola\n');
+    expect(r.salida).toBe('1:hola');
   });
 
   conJdk('acepta una clase publica cuyo archivo no se llama Main', () => {

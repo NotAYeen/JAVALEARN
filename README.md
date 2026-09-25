@@ -107,13 +107,13 @@ medía 22 px de alto.
 
 ```
 src/
-  engine/     el motor de Java: lexer, parser, interprete, biblioteca
+  engine/     el motor de Java: lexer (hecho), parser, interprete, biblioteca
   worker/     ejecucion aislada del motor (pendiente)
-  ui/         editor, modales, tema, anuncios a lector de pantalla
+  ui/         rutas, vistas, tema, anuncios a lector de pantalla
   data/       unidades y misiones
   state/      almacenamiento, progreso
 css/          tokens de tema y estilos
-scripts/      validacion, contraste, iconos, presupuesto
+scripts/      validacion, contraste, iconos, presupuesto, auditoria de navegador
 tests/        pruebas unitarias, de scripts y de accesibilidad
 ```
 
@@ -136,17 +136,31 @@ terminal, depurar, auditar, ensamblar y relacionar.
 
 ## Estado del proyecto
 
+Publicado en <https://notayeen.github.io/JAVALEARN/>.
+
 | Fase | Estado |
 |---|---|
-| 0. Andamiaje, diseño, CI, accesibilidad base | en curso |
+| 0. Andamiaje, diseño, CI, accesibilidad base | completada |
 | 1. Lector léxico | completada |
-| 2. Parser | pendiente |
-| 3. Intérprete y biblioteca | pendiente |
-| 4. Editor y catálogo de misiones | pendiente |
-| 5. Modalidades de interacción | pendiente |
-| 6. Misiones y glosario | pendiente |
-| 7. PWA, logros, pulido | pendiente |
-| 8. Despliegue | pendiente |
+| 2. Navegación, rutas y vistas de lectura | completada |
+| 2b. Misiones de la unidad 1 (modo lectura) | completada, 5 de 43 |
+| 3. Parser | pendiente |
+| 4. Intérprete y biblioteca | pendiente |
+| 5. Editor y ejecución en el navegador | pendiente |
+| 6. Modalidades de interacción | pendiente |
+| 7. Misiones restantes y glosario | pendiente |
+| 8. PWA, logros, pulido | pendiente |
+
+**Lo que se puede hacer hoy:** navegar por la unidad 1 y leer sus cinco
+lecciones, con ejemplos de código, tablas, pistas y glosario.
+
+**Lo que no:** escribir ni ejecutar código. El intérprete todavía no existe, y
+la portada lo dice en el sitio en lugar de esconderlo detrás de un botón que no
+hace nada.
+
+Los bloques de código de las lecciones se compilan y se ejecutan con el `javac`
+real antes de publicarse, así que la salida que se muestra junto a cada ejemplo
+está comprobada, no escrita a mano.
 
 ## Créditos
 

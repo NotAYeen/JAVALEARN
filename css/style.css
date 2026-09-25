@@ -9,8 +9,6 @@
 :root {
   --radio: 10px;
   --radio-s: 6px;
-  --sombra: 0 1px 2px rgb(0 0 0 / 0.16), 0 4px 12px rgb(0 0 0 / 0.10);
-  --sombra-alta: 0 8px 28px rgb(0 0 0 / 0.28);
   --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fuente-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --ancho-max: 76rem;
@@ -37,6 +35,12 @@
   --aviso: #f2c14e;
   --error: #ff8a8a;
   --foco: #ffd166;
+  --fondo-codigo: #12151d;
+  /* Las sombras tambien son color, asi que viven aqui y no en :root. El
+     tema claro necesita las suyas mas suaves: sobre fondo blanco, una sombra
+     fuerte parece una mancha gris en lugar de una sombra. */
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.30), 0 4px 12px rgb(0 0 0 / 0.22);
+  --sombra-alta: 0 8px 28px rgb(0 0 0 / 0.40);
   color-scheme: dark;
 }
 /* ====================== FIN TEMA OSCURO ====================== */
@@ -56,6 +60,11 @@
   --aviso: #8a5a00;
   --error: #b3261e;
   --foco: #7a4b00;
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 12px rgb(0 0 0 / 0.08);
+  --sombra-alta: 0 8px 28px rgb(0 0 0 / 0.14);
+  /* Fondo de los bloques de codigo. Ligeramente distinto del fondo general
+     para que se lea como "esto es codigo" sin necesidad de un borde. */
+  --fondo-codigo: #f1f3f7;
   color-scheme: light;
 }
 /* ====================== FIN TEMA CLARO ====================== */
@@ -110,6 +119,25 @@ pre,
 samp {
   font-family: var(--fuente-mono);
   font-size: 0.95em;
+}
+
+/* Bloque de codigo. En movil el scroll horizontal va dentro del propio bloque,
+   nunca en la pagina: si el <pre> se desborda, la pagina entera se desplaza
+   de lado y la columna de texto se va con ella. */
+.codigo {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: var(--fondo-codigo);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow-x: auto;
+  line-height: 1.5;
+  tab-size: 2;
+}
+
+.codigo code {
+  font-size: 0.88rem;
+  white-space: pre;
 }
 
 /* Foco visible y consistente en todo el documento. */
@@ -468,3 +496,357 @@ a:hover {
   background: var(--superficie-2);
 }
 
+
+/* ========================================================================== */
+/* Navegacion entre vistas                                                    */
+/* ========================================================================== */
+
+.migas {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.migas a {
+  color: var(--acento);
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.titulo-vista {
+  margin-bottom: 0.5rem;
+}
+
+/* El h1 recibe tabindex="-1" al pintarse para poder recibir el foco tras
+   navegar. Sin contorno visible: no es un control, es un destino. */
+main h1:focus {
+  outline: none;
+}
+
+main h1:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 4px;
+}
+
+.intro {
+  max-width: 60ch;
+}
+
+/* ========================================================================== */
+/* Tarjetas enlazadas                                                         */
+/* ========================================================================== */
+
+.tarjeta-unidad__enlace,
+.tarjeta-mision__enlace {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100%;
+  padding: 1rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radio);
+}
+
+.tarjeta-unidad__enlace:hover,
+.tarjeta-mision__enlace:hover {
+  background: var(--superficie-2);
+}
+
+.tarjeta-unidad__enlace:focus-visible,
+.tarjeta-mision__enlace:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+
+/* Las unidades sin contenido se distinguen con el borde discontinuo y con la
+   etiqueta de texto, nunca bajando la opacidad. Con opacity el texto se
+   atenua junto con el resto de la tarjeta y el contraste del resumen cae por
+   debajo de 4.5:1 sin que se note a simple vista: es un fallo que solo aparece
+   al medirlo. */
+.tarjeta-unidad--vacia {
+  border-style: dashed;
+  border-color: var(--borde);
+}
+
+.tarjeta-unidad--vacia .tarjeta-unidad__titulo {
+  color: var(--texto);
+}
+
+.boton--secundario {
+  color: var(--texto);
+  background: var(--superficie-2);
+  border-color: var(--borde-fuerte);
+}
+
+.panel--vacio {
+  text-align: center;
+}
+
+/* ========================================================================== */
+/* Lista de misiones de una unidad                                            */
+/* ========================================================================== */
+
+.lista-misiones {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tarjeta-mision__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radio);
+  background: var(--superficie-2);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.tarjeta-mision__titulo {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.tarjeta-mision__objetivo {
+  color: var(--texto-suave);
+  font-size: 0.92rem;
+}
+
+.lista-objetivos {
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+/* ========================================================================== */
+/* Leccion                                                                    */
+/* ========================================================================== */
+
+.cabecera-leccion__etiquetas {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0 0 0.35rem;
+}
+
+.cabecera-leccion__unidad {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.leccion {
+  max-width: 70ch;
+}
+
+.leccion p {
+  margin: 0 0 1rem;
+}
+
+.subseccion {
+  margin: 1.5rem 0;
+}
+
+.subseccion h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+
+.ejemplo {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.ejemplo__titulo {
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+}
+
+.ejemplo__nota {
+  margin: 0.7rem 0 0;
+  font-size: 0.92rem;
+  color: var(--texto-suave);
+}
+
+.salida {
+  margin: 0.8rem 0 0;
+}
+
+.salida__etiqueta {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  margin-bottom: 0.3rem;
+}
+
+.salida__texto {
+  margin: 0;
+  background: var(--fondo-codigo);
+  border: 1px dashed var(--borde-fuerte);
+}
+
+.bloque {
+  margin: 2.5rem 0;
+}
+
+.bloque h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.nota {
+  color: var(--texto-suave);
+  font-size: 0.92rem;
+  margin: 0 0 0.8rem;
+}
+
+/* ========================================================================== */
+/* Tablas, glosario, pistas                                                   */
+/* ========================================================================== */
+
+/* Una tabla con muchas columnas se sale en movil. Se permite scroll
+   horizontal en su propio contenedor en vez de en toda la pagina: si no,
+   el scroll de la tabla se convierte en el scroll del documento. */
+.tabla-envoltorio {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.tabla {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 22rem;
+}
+
+.tabla th,
+.tabla td {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla thead th {
+  background: var(--superficie-2);
+  font-size: 0.85rem;
+}
+
+.tabla tbody tr:last-child th,
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.lista-etiquetas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lista-glosario {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+}
+
+.lista-glosario__item code {
+  font-size: 0.9rem;
+}
+
+/* <details> y no un boton con JavaScript: es disclosure nativo, se abre con
+   Enter y con Espacio, y el lector de pantalla anuncia su estado sin ayuda. */
+.pista {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  margin-bottom: 0.5rem;
+  background: var(--superficie-2);
+}
+
+.pista__resumen {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: var(--radio);
+}
+
+.pista__resumen:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: -3px;
+}
+
+.pista[open] .pista__resumen {
+  border-bottom: 1px solid var(--borde);
+}
+
+.pista__texto {
+  margin: 0;
+  padding: 0.8rem 1rem;
+}
+
+.paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin: 2.5rem 0 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--borde);
+}
+
+.paginacion__hueco {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .paginacion__hueco {
+    display: block;
+  }
+}
+
+/* ========================================================================== */
+/* Etiquetas de modalidad                                                     */
+/* ========================================================================== */
+
+.etiqueta--lista,
+.etiqueta--vocab,
+.etiqueta--lectura,
+.etiqueta--terminal,
+.etiqueta--depuracion,
+.etiqueta--auditoria,
+.etiqueta--ensamblaje,
+.etiqueta--relacion {
+  color: var(--texto);
+  background: var(--superficie-2);
+}
+
+/* Las regiones con scroll propio son tabulables (llevan tabindex="0" en el
+   HTML). El anillo va por dentro para que no lo recorte el contenedor. */
+.codigo:focus-visible,
+.salida__texto:focus-visible,
+.tabla-envoltorio:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: -3px;
+}
