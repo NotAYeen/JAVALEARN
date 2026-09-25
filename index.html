@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>JavaLearn — aprende Java de cero a intermedio en el navegador</title>
+    <meta
+      name="description"
+      content="Ruta interactiva y accesible para aprender Java desde el primer println hasta herencia, polimorfismo y excepciones. Funciona en el movil y no necesita instalar nada."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0f1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icono.svg" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./css/style.css" />
+
+    <script>
+      /*
+       * Se resuelve el tema antes de pintar para evitar el destello del tema
+       * equivocado. Hay solo dos paletas, y las dos se auditan en la CI, asi
+       * que en lugar de duplicar los colores en una media query de CSS
+       * aplicamos aqui la preferencia del sistema de forma explicita.
+       * localStorage puede lanzar en modo privado, de ahi el try/catch.
+       */
+      (function () {
+        try {
+          var guardado = localStorage.getItem('javalearn.tema');
+          if (guardado === 'claro' || guardado === 'oscuro') {
+            document.documentElement.dataset.tema = guardado;
+            return;
+          }
+        } catch (e) {
+          /* Sin almacenamiento: seguimos con la preferencia del sistema. */
+        }
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+          document.documentElement.dataset.tema = 'claro';
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a class="saltar-al-contenido" href="#contenido">Saltar al contenido principal</a>
+
+    <div class="marco">
+      <header class="cabecera">
+        <div class="cabecera__fila">
+          <p class="cabecera__marca">
+            <span class="cabecera__nombre">JavaLearn</span>
+            <span class="cabecera__lema">Java de cero a intermedio</span>
+          </p>
+
+          <button
+            id="btn-tema"
+            class="boton boton--icono"
+            type="button"
+            data-accion="tema"
+          >
+            <span aria-hidden="true">◐</span>
+            <span data-texto-tema class="sr-solo">Cambiar a tema claro</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="marco__contenido">
+        <nav id="nav-unidades" class="panel" aria-label="Unidades del curso" hidden>
+          <h2 class="panel__titulo">Recorrido</h2>
+          <ol id="lista-unidades" class="lista-plana"></ol>
+        </nav>
+
+        <main id="contenido" tabindex="-1">
+          <div id="region-polite" class="sr-solo" role="status" aria-live="polite" aria-atomic="true"></div>
+          <div id="region-urgente" class="sr-solo" role="alert" aria-live="assertive" aria-atomic="true"></div>
+          <div id="vista-mision"></div>
+        </main>
+      </div>
+
+      <footer class="pie">
+        <div class="pie__contenido">
+          <span>JavaLearn — proyecto educativo de c&oacute;digo abierto, licencia ISC.</span>
+          <a href="https://github.com/NotAYeen/JAVALEARN#javalearn">Documentaci&oacute;n y c&oacute;digo fuente</a>
+        </div>
+      </footer>
+    </div>
+
+    <noscript>
+      <p style="padding: 1rem">
+        JavaLearn necesita JavaScript para ejecutar el int&eacute;rprete de Java en tu
+        navegador. Act&iacute;valo y vuelve a cargar esta p&aacute;gina.
+      </p>
+    </noscript>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

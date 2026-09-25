@@ -1,0 +1,30 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Salida de scripts locales
+tmp/
+*.log
+npm-debug.log*
+
+# Pruebas
+coverage/
+test-results/
+playwright-report/

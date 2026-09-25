@@ -1,0 +1,470 @@
+/* =========================================================================
+   JavaLearn — hoja de estilos base
+   Mobile-first. Objetivo de accesibilidad: WCAG 2.2 AA.
+   Los colores viven en dos bloques delimitados (INICIO/FIN TEMA) porque
+   scripts/check-contrast.mjs los extrae de aquí para auditar el contraste.
+   ========================================================================= */
+
+/* ----------------------------- Rejilla y ritmo --------------------------- */
+:root {
+  --radio: 10px;
+  --radio-s: 6px;
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.16), 0 4px 12px rgb(0 0 0 / 0.10);
+  --sombra-alta: 0 8px 28px rgb(0 0 0 / 0.28);
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --ancho-max: 76rem;
+  --alto-barra: 3.5rem;
+  /* Zona segura del movil (notch / barra de gestos). */
+  --seguro-abajo: env(safe-area-inset-bottom, 0px);
+  --seguro-arriba: env(safe-area-inset-top, 0px);
+  --seguro-lateral: env(safe-area-inset-left, env(safe-area-inset-right, 0px));
+}
+
+/* ===================== INICIO TEMA OSCURO ===================== */
+:root,
+[data-tema="oscuro"] {
+  --fondo: #0f1117;
+  --superficie: #161922;
+  --superficie-2: #1e222d;
+  --texto: #e6e9ef;
+  --texto-suave: #a9b1c0;
+  --borde: #2b3243;
+  --borde-fuerte: #646e8c;
+  --acento: #7cb0ff;
+  --sobre-acento: #0b1220;
+  --exito: #5fd69b;
+  --aviso: #f2c14e;
+  --error: #ff8a8a;
+  --foco: #ffd166;
+  color-scheme: dark;
+}
+/* ====================== FIN TEMA OSCURO ====================== */
+
+/* ===================== INICIO TEMA CLARO ===================== */
+[data-tema="claro"] {
+  --fondo: #ffffff;
+  --superficie: #f7f8fa;
+  --superficie-2: #eceff3;
+  --texto: #14171d;
+  --texto-suave: #4c5566;
+  --borde: #d7dbe2;
+  --borde-fuerte: #6b7280;
+  --acento: #0b4fc4;
+  --sobre-acento: #ffffff;
+  --exito: #14663f;
+  --aviso: #8a5a00;
+  --error: #b3261e;
+  --foco: #7a4b00;
+  color-scheme: light;
+}
+/* ====================== FIN TEMA CLARO ====================== */
+
+/* ------------------------------- Base ----------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--texto);
+  background: var(--fondo);
+  /* Nunca ocultar el enfoque con contorno:none; :focus-visible lo hace visible. */
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.9rem);
+}
+
+h2 {
+  font-size: clamp(1.15rem, 1rem + 0.8vw, 1.5rem);
+}
+
+p {
+  margin: 0 0 1em;
+  text-wrap: pretty;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--fuente-mono);
+  font-size: 0.95em;
+}
+
+/* Foco visible y consistente en todo el documento. */
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ----------------------------- Utilidades ------------------------------- */
+
+/* Visible solo para lectores de pantalla. */
+.sr-solo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Enlace de salto: oculto hasta recibir el foco. */
+.saltar-al-contenido {
+  position: absolute;
+  left: 0.5rem;
+  top: -100%;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radio-s);
+}
+
+.saltar-al-contenido:focus {
+  top: 0.5rem;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* -------------------------------- Marco --------------------------------- */
+.marco {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--seguro-lateral);
+  padding-right: var(--seguro-lateral);
+}
+
+.marco__contenido {
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  flex: 1 1 auto;
+}
+
+/* -------------------------------- Cabecera ------------------------------ */
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding-top: var(--seguro-arriba);
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+
+.cabecera__fila {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--alto-barra);
+  padding: 0.5rem 1rem;
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+}
+
+.cabecera__marca {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-right: auto;
+  font-weight: 700;
+}
+
+.cabecera__nombre {
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.cabecera__lema {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 30rem) {
+  .cabecera__lema {
+    display: none;
+  }
+}
+
+/* -------------------------------- Botones ------------------------------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Objetivo tactil minimo de 44x44 CSS px. */
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--texto);
+  background: var(--superficie-2);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio-s);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.boton:hover:not(:disabled) {
+  background: var(--borde);
+}
+
+.boton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.boton--principal {
+  background: var(--acento);
+  color: var(--sobre-acento);
+  border-color: var(--acento);
+}
+
+.boton--principal:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* Boton de icono: cuadrado, con etiqueta obligatoria para lectores. */
+.boton--icono {
+  padding: 0.5rem;
+}
+
+@media (forced-colors: active) {
+  .boton {
+    border: 1px solid ButtonBorder;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight;
+  }
+}
+
+/* ------------------------------- Tarjetas ------------------------------- */
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+}
+
+.rejilla {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+  .rejilla {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* -------------------------------- Paneles ------------------------------- */
+.panel {
+  padding: 1rem 1.15rem;
+  margin: 0 0 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--acento);
+  border-radius: var(--radio);
+}
+
+.panel--exito {
+  border-left-color: var(--exito);
+}
+
+.panel--aviso {
+  border-left-color: var(--aviso);
+}
+
+.panel--error {
+  border-left-color: var(--error);
+}
+
+.panel__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.panel--exito .panel__titulo {
+  color: var(--exito);
+}
+
+.panel--aviso .panel__titulo {
+  color: var(--aviso);
+}
+
+.panel--error .panel__titulo {
+  color: var(--error);
+}
+
+.panel p:last-child {
+  margin-bottom: 0;
+}
+
+/* -------------------------------- Pie ----------------------------------- */
+.pie {
+  padding: 1.5rem 1rem calc(1.5rem + var(--seguro-abajo));
+  margin-top: 2rem;
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+  border-top: 1px solid var(--borde);
+}
+
+.pie__contenido {
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+}
+
+.pie a {
+  color: var(--acento);
+  /* El pie es codigo suelto, no un enlace dentro de un parrafo: merece un
+     objetivo comodo igual que el resto de controles. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.4rem;
+}
+
+/* ------------------------------ Enlaces --------------------------------- */
+a {
+  color: var(--acento);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ------------------------------ Listas --------------------------------- */
+.lista-plana {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------ Portada -------------------------------- */
+.intro {
+  max-width: 46rem;
+  font-size: 1.05rem;
+  color: var(--texto-suave);
+}
+
+/* Lista sin marcadores: el numero de unidad ya hace ese trabajo. */
+.lista-unidades {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  counter-reset: unidad;
+}
+
+.tarjeta-unidad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tarjeta-unidad__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--sobre-acento);
+  background: var(--acento);
+  border-radius: 50%;
+}
+
+.tarjeta-unidad__titulo {
+  margin: 0.35rem 0 0;
+  font-size: 1.05rem;
+}
+
+.tarjeta-unidad__resumen {
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+.tarjeta-unidad__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: auto 0 0;
+  padding-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+/* Etiqueta de estado: nunca solo color, siempre texto. */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.etiqueta--pendiente {
+  color: var(--texto-suave);
+  background: var(--superficie-2);
+}
+

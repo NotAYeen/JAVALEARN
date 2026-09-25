@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paginas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    name: Validar
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # El contraste con el JDK real es la pieza que da credibilidad al motor:
+      # sin un JDK instalado, el validador no puede comparar y --jdk aborta.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar misiones contra el JDK real
+        run: npm run validate -- --jdk
+
+      - name: Comprobar contraste WCAG
+        run: npm run contrast
+
+      - name: Comprobar que los iconos estan al dia
+        run: |
+          node scripts/generate-icons.mjs
+          git diff --exit-code -- public/icons
+
+      - name: Pruebas
+        run: npm test
+
+      - name: Construir
+        run: npm run build
+
+      - name: Comprobar presupuesto de tamano
+        run: npm run budget
+
+      # La auditoria con navegador real es la unica que calcula el contraste
+      # de verdad: axe sobre jsdom no puede, y los tokens del CSS no incluyen
+      # los colores que solo existen al componer la pagina.
+      - name: Instalar navegador para la auditoria
+        run: npx playwright-core install --with-deps chromium
+
+      - name: Auditar la build en un navegador real
+        run: npm run audit
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  desplegar:
+    name: Desplegar en GitHub Pages
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+
+    steps:
+      - name: Desplegar
+        id: despliegue
+        uses: actions/deploy-pages@v4

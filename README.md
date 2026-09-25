@@ -1,0 +1,156 @@
+# JavaLearn
+
+Ruta interactiva y accesible para aprender Java de cero a nivel intermedio,
+dentro del navegador y sin instalar nada.
+
+- **Web:** https://notayeen.github.io/javalearn/
+- **Licencia:** ISC
+- **Publicación:** GitHub Pages, sitio estático sin servidor
+
+## Qué problema resuelve
+
+La mayoría de cursos de Java para principiantes obligan a instalar un JDK, un
+IDE y a dealear con errores de compilación en inglés antes de escribir la
+primera línea. JavaLearn quita las tres barreras: escribes Java en el
+navegador, pulsas ejecutar y lees el resultado al instante, también desde el
+móvil.
+
+## Por qué un intérprete propio
+
+La primera versión de este proyecto usó CheerpJ para compilar Java de verdad en
+el navegador. Se descartó tras medirlo, y estos son los números:
+
+| | CheerpJ 2.3 | Intérprete propio |
+|---|---|---|
+| Descarga inicial | 17,5 MB (`tools.jar`, licencia GPLv2) | 0 |
+| Primera compilación en móvil | 24–36 s | menos de 100 ms |
+| Compilación en caliente | 134 ms | 1–5 ms |
+| Licencia | GPLv2, y el runtime prohíbe autoalojarlo | del proyecto |
+| Bucle infinito | congela el proceso, hay que matarlo | se corta solo por límite de pasos |
+| Mensajes de error | los de `javac`, en inglés | escritos en castellano |
+
+Un alumno con datos móviles no puede permitirse medio minuto de espera por
+`println`. Además, controlando el motor podemos **diseñar el error** en vez de
+traducirlo: en lugar de `';' expected` el alumno lee *"falta un punto y coma en
+la línea 4"*, con el cursor bajo el carácter exacto y una explicación enlazada
+al glosario.
+
+**Lo que esto no es:** JavaLearn no es una JVM. Es un intérprete del subconjunto
+de Java 8 que necesitan las misiones. Cuando el alumno escribe algo fuera del
+subconjunto, el aviso lo dice con claridad en lugar de fallar de forma rara. La
+app muestra este aviso de forma permanente, en la propia portada.
+
+## La garantía: contraste contra el JDK real
+
+El riesgo de un intérprete propio es que se desvíe de Java. Por eso
+`npm run validate` ejecuta **cada solución de misión dos veces**: con el
+intérprete y con el `javac` real, y exige que las dos salidas sean idénticas.
+Además, el código de las misiones de *Depuración* tiene que **fallar** en el
+`javac` de verdad, o la misión estaría mal planteada.
+
+Esa comprobación corre también en la CI, con un JDK instalado. Si un día el
+motor diverge de Java, la CI lo detecta antes de que lo detecte un alumno.
+
+## Accesibilidad
+
+El objetivo es **WCAG 2.2 AA**, y cada punto es comprobable en lugar de
+declarativo:
+
+- Skip link, landmarks (`banner`, `navigation`, `main`, `contentinfo`) y regiones
+  de anuncio para lector de pantalla.
+- Todo control es un `<button>` o un `<a>` nativo. Nada que dependa de un clic
+  con el ratón.
+- Auditoría de la interfaz con `axe-core` en cada `npm test`.
+- Contraste de color auditado con la matemática real de WCAG
+  (`npm run contrast`): 36 combinaciones comprobadas en los dos temas, y la CI
+  falla si alguien cambia un color y lo rompe.
+- Objetivos táctiles de 44×44 px, `viewport-fit=cover` y respeto de las zonas
+  seguras del móvil.
+- `prefers-reduced-motion`, `prefers-color-scheme` con escucha en vivo,
+  `forced-colors` y foco visible en todo el documento.
+
+El test de accesibilidad y el de contraste corren ya en esta fase, para no
+acumular deuda mientras crece la interfaz.
+
+## Puesta en marcha
+
+```bash
+npm install
+npm run dev        # servidor de desarrollo
+npm run build      # genera dist/
+npm run preview    # sirve dist/ tal cual se publicara
+```
+
+### Comprobaciones
+
+```bash
+npm test                      # 111 pruebas: motor, scripts, accesibilidad
+npm run validate -- --jdk     # contrasta las misiones contra el JDK real
+npm run contrast              # auditoria de contraste WCAG sobre los tokens
+npm run budget                # presupuesto de tamano del bundle
+npm run audit                 # audita la build en Edge o Chrome de verdad
+node scripts/generate-icons.mjs
+```
+
+Cada capa cubre lo que las anteriores no ven. `npm test` corre `axe-core`
+sobre `jsdom`, que no calcula diseño y por eso no puede evaluar el contraste
+real; `npm run contrast` sí lo hace, pero sobre los tokens del CSS; y
+`npm run audit` abre la build en un navegador y comprueba el contraste ya
+calculado, que además incluye los colores que solo existen al componer la
+página. También detecta desbordamiento horizontal en un móvil de 360 px,
+texto por debajo de 16 px y objetivos táctiles menores de 44×44.
+
+Durante el desarrollo de esta fase detectó un fallo real: el enlace del pie
+medía 22 px de alto.
+
+## Estructura
+
+```
+src/
+  engine/     el motor de Java: lexer, parser, interprete, biblioteca
+  worker/     ejecucion aislada del motor (pendiente)
+  ui/         editor, modales, tema, anuncios a lector de pantalla
+  data/       unidades y misiones
+  state/      almacenamiento, progreso
+css/          tokens de tema y estilos
+scripts/      validacion, contraste, iconos, presupuesto
+tests/        pruebas unitarias, de scripts y de accesibilidad
+```
+
+## Temario
+
+Nueve unidades, de lo más básico a intermedio, sin nivel experto:
+
+1. Fundamentos
+2. Variables y tipos
+3. Condiciones
+4. Bucles
+5. Métodos y clases
+6. Cadenas y arreglos
+7. Colecciones
+8. Herencia y polimorfismo
+9. Excepciones
+
+Cada misión se practica con una de seis modalidades: leer, escribir en la
+terminal, depurar, auditar, ensamblar y relacionar.
+
+## Estado del proyecto
+
+| Fase | Estado |
+|---|---|
+| 0. Andamiaje, diseño, CI, accesibilidad base | en curso |
+| 1. Lector léxico | completada |
+| 2. Parser | pendiente |
+| 3. Intérprete y biblioteca | pendiente |
+| 4. Editor y catálogo de misiones | pendiente |
+| 5. Modalidades de interacción | pendiente |
+| 6. Misiones y glosario | pendiente |
+| 7. PWA, logros, pulido | pendiente |
+| 8. Despliegue | pendiente |
+
+## Créditos
+
+`pylearn` sirvió de **referencia de enfoque** —SPA estática, intérprete en
+worker, script que valida las misiones contra el runtime real, datos de
+contenido como módulo único— y en ningún caso de código. Los patrones que se
+decidieron **no** copiar están anotados en `AGENTS.md`.

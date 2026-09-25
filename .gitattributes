@@ -1,0 +1,8 @@
+# Normaliza los finales de linea para que los diffs no cambien segun el
+# editor de cada persona.
+* text=auto eol=lf
+
+# Los iconos son binarios: Git no debe tocar los finales de linea.
+*.png binary
+*.ico binary
+*.webmanifest text eol=lf
