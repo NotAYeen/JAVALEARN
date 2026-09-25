@@ -88,6 +88,45 @@ function servir() {
 const MOVIL = { width: 360, height: 640 };
 
 /**
+ * Comprueba que los recursos precacheados por el service worker existen.
+ *
+ * Se leen de la constante SHELL del propio sw.js, no de una copia: si la lista
+ * cambia alli, esta comprobacion la sigue sin que haya que tocar dos sitios.
+ */
+function comprobarShell() {
+  const fallos = [];
+  const fuente = readFileSync(join(DIST, 'sw.js'), 'utf8');
+  const coincidencia = fuente.match(/const\s+SHELL\s*=\s*\[([^\]]*)\]/);
+
+  if (!coincidencia) {
+    fallos.push('sw.js: no se encuentra la constante SHELL; el service worker no precachea nada.');
+    return fallos;
+  }
+
+  const rutas = [...coincidencia[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  if (rutas.length === 0) {
+    fallos.push('sw.js: SHELL esta vacia.');
+    return fallos;
+  }
+
+  for (const ruta of rutas) {
+    const limpio = ruta.replace(/^\.\//, '');
+    const destino = join(DIST, limpio === '' ? 'index.html' : limpio);
+    if (!existsSync(destino)) {
+      fallos.push(
+        `sw.js: SHELL pide "${ruta}" y en dist/ no existe. cache.addAll es atomico, ` +
+          'asi que un solo fallo deja el service worker sin instalar.',
+      );
+    }
+  }
+
+  if (fallos.length === 0) {
+    console.log(`Service worker: los ${rutas.length} recursos de SHELL existen en dist/.`);
+  }
+  return fallos;
+}
+
+/**
  * Rutas que se auditan. No basta con comprobar la portada: los enlaces, los
  * botones de las tarjetas y los bloques desplegables solo existen dentro de las
  * vistas, y son justo los que se rompen con mas facilidad.
@@ -106,13 +145,18 @@ async function principal() {
     process.exit(1);
   }
 
+  /* Cada recurso que el service worker precachea tiene que existir de verdad en
+     la build. cache.addAll es atomico: si uno falla, no se instala nada y el
+     service worker desaparece sin avisar, dejando la PWA sin funcionar offline
+     y sin un solo error visible en la pagina. */
+  const problemas = comprobarShell();
+
   const { servidor, puerto } = await servir();
   const base = `http://127.0.0.1:${puerto}/`;
   mkdirSync(SALIDA, { recursive: true });
 
   const navegador = await abrirNavegador(process.argv.includes('--headed'));
 
-  const problemas = [];
   let violacionesAxe = 0;
   const entradasAxe = [];
 
@@ -232,6 +276,33 @@ async function principal() {
         }
 
         await pagina.screenshot({ path: join(SALIDA, `${dispositivo}-${ruta.nombre}.png`), fullPage: true });
+
+        /* El service worker tiene que instalarse de verdad, no solo existir los
+           archivos. Es el unico modo de saber que cache.addAll no falla por
+           algo que esta comprobacion estatica no ve. */
+        if (ruta.nombre === 'portada') {
+          const sw = await pagina.evaluate(async () => {
+            if (!('serviceWorker' in navigator)) return { soportado: false };
+            const registro = await Promise.race([
+              navigator.serviceWorker.ready,
+              new Promise((r) => setTimeout(() => r(null), 8000)),
+            ]);
+            return {
+              soportado: true,
+              instalado: Boolean(registro),
+              alcance: registro?.scope ?? null,
+            };
+          });
+          if (sw.soportado && !sw.instalado) {
+            problemas.push(`${donde}: el service worker no llega a instalarse`);
+          } else if (sw.instalado && !sw.alcance?.endsWith('/JAVALEARN/') && sw.alcance && dispositivo === 'escritorio') {
+            /* En Pages el alcance depende del subdirectorio; solo se avisa si no
+               termina en barra, que es lo unico que debe cumplirse siempre. */
+            if (!sw.alcance.endsWith('/')) {
+              problemas.push(`${donde}: el alcance del service worker es raro: ${sw.alcance}`);
+            }
+          }
+        }
       }
 
       console.log(`  ${dispositivo.padEnd(10)} ${RUTAS.length} rutas auditadas`);

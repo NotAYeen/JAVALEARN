@@ -93,6 +93,11 @@ Criterio: **casi ninguna**. El presupuesto del bundle lo vigila
 - Sin framework de interfaz. DOM directo.
 - CodeMirror 6, y solo los paquetes necesarios.
 - La PWA está escrita a mano: `sw.js` más un manifest, sin `vite-plugin-pwa`.
+- `SHELL` en `sw.js` solo puede contener archivos cuyo nombre no dependa del
+  build. `cache.addAll` es **atómico**: un solo 404 y no se instala nada, así
+  que un service worker roto deja la página funcionando y la PWA apagada, sin
+  un error visible. Por eso `npm run audit` comprueba que lo de `SHELL` exista
+  en `dist/` **y** que el worker llegue a instalarse en un navegador de verdad.
 - Los iconos se generan con un codificador PNG propio sobre `node:zlib`
   (`scripts/generate-icons.mjs`) en lugar de una librería de imagen.
 - Si añades una dependencia, explica en el PR qué elimina y cuánto pesa.

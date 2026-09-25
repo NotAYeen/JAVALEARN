@@ -9,10 +9,25 @@
  * Cachear "lo que ya se pidio" es mas simple y no puede quedar obsoleto.
  */
 
-const VERSION = 'javalearn-v1';
+const VERSION = 'javalearn-v2';
 const CACHE = VERSION;
 
-const SHELL = ['./', './index.html', './css/style.css', './manifest.webmanifest'];
+/*
+ * Solo archivos cuyo nombre no depende del build.
+ *
+ * Una version anterior pedia aqui './css/style.css', que en la build no existe:
+ * Vite lo renombra a './assets/index-<hash>.css'. Como cache.addAll es atomico,
+ * ese 404 hacia que no se instalara nada y el service worker desaparecia en
+ * silencio: la pagina funcionaba, pero sin PWA y sin un error a la vista.
+ *
+ * El CSS y el JS con hash no se precachean: se guardan en la primera visita,
+ * gracias al manejador de fetch, que ya cachea lo que se pide. Y al cambiar el
+ * bundle cambia el nombre, asi que nunca se sirve una version vieja.
+ *
+ * scripts/auditar-navegador.mjs comprueba que todo lo de esta lista exista de
+ * verdad en dist/, asi que el mismo error no puede volver a colarse.
+ */
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icono-192.png'];
 
 self.addEventListener('install', (evento) => {
   evento.waitUntil(
