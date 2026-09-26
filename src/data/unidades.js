@@ -12,7 +12,7 @@ export const UNIDADES = [
     id: 'fundamentos',
     numero: 1,
     titulo: 'Fundamentos',
-    resumen: 'Tu primer programa, lo que se imprime y en que orden.',
+    resumen: 'Tu primer programa, lo que se imprime y en qué orden.',
     misiones: 5,
   },
   {
@@ -26,7 +26,7 @@ export const UNIDADES = [
     id: 'condiciones',
     numero: 3,
     titulo: 'Condiciones',
-    resumen: 'if, else if, operadores logicos, switch y el ternario.',
+    resumen: 'if, else if, operadores lógicos, switch y el ternario.',
     misiones: 5,
   },
   {
@@ -39,8 +39,8 @@ export const UNIDADES = [
   {
     id: 'metodos',
     numero: 5,
-    titulo: 'Metodos y clases',
-    resumen: 'Organizar el codigo en metodos, constructores y campos.',
+    titulo: 'Métodos y clases',
+    resumen: 'Organizar el código en métodos, constructores y campos.',
     misiones: 5,
   },
   {

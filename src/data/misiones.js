@@ -54,12 +54,12 @@ export const MISIONES = [
     titulo: 'Tu primer programa',
     modalidad: 'lectura',
     objetivos: [
-      'Reconocer las tres piezas de un programa Java: la clase, el metodo main y la instruccion que imprime',
-      'Saber que las llaves delimitan bloques de codigo y que el orden de las llaves importa',
-      'Escribir un programa que imprima una linea de texto',
+      'Reconocer las tres piezas de un programa Java: la clase, el método main y la instrucción que imprime',
+      'Saber que las llaves delimitan bloques de código y que el orden de las llaves importa',
+      'Escribir un programa que imprima una línea de texto',
     ],
     vocabulario: ['public', 'class', 'static', 'void', 'main', 'String', 'args', 'System', 'out', 'println'],
-    glosario: ['clase', 'metodo', 'parametro', 'instruccion', 'llave', 'punto y coma'],
+    glosario: ['clase', 'método', 'parámetro', 'instrucción', 'llave', 'punto y coma'],
     solucion: `public class Main {
   public static void main(String[] args) {
     System.out.println("Hola, mundo");
@@ -77,29 +77,29 @@ export const MISIONES = [
         titulo: 'Las tres piezas, de fuera hacia dentro',
         items: [
           '`public class Main` declara una clase. `Main` es su nombre y tiene que coincidir con el nombre del archivo: `Main.java`.',
-          '`public static void main(String[] args)` declara el metodo `main`. Java lo busca al arrancar, es el punto de entrada obligatorio.',
-          '`System.out.println("Hola, mundo")` es la instruccion que imprime. El punto y coma cierra la instruccion.',
+          '`public static void main(String[] args)` declara el método `main`. Java lo busca al arrancar, es el punto de entrada obligatorio.',
+          '`System.out.println("Hola, mundo")` es la instrucción que imprime. El punto y coma cierra la instrucción.',
         ],
       },
       {
         tipo: 'codigo',
-        titulo: 'Que imprime exactamente',
+        titulo: 'Qué imprime exactamente',
         codigo: 'System.out.println("Hola, mundo");',
         salida: 'Hola, mundo',
       },
       {
         tipo: 'aviso',
         tono: 'atencion',
-        texto: 'El punto y coma no es opcional en Java. Si se te olvida, el compilador te dira exactamente en que linea falta, y esa es una de las razones por las que el entorno marca la posicion del error: no tienes que contar lineas a mano.',
+        texto: 'El punto y coma no es opcional en Java. Si se te olvida, el compilador te dirá exactamente en qué línea falta, y esa es una de las razones por las que el entorno marca la posición del error: no tienes que contar líneas a mano.',
       },
       {
         tipo: 'parrafo',
-        texto: 'Fijate en que las llaves van siempre en pareja. Una llave abre un bloque y la siguiente lo cierra. Si sobran o faltan, Java se confunde a partir de ahi, y el error que te senala puede estar lejos de la causa real.',
+        texto: 'Fíjate en que las llaves van siempre en pareja. Una llave abre un bloque y la siguiente lo cierra. Si sobran o faltan, Java se confunde a partir de ahí, y el error que te señala puede estar lejos de la causa real.',
       },
     ],
     pistas: [
-      { nivel: 1, texto: 'El nombre de la clase va despues de la palabra `class`, y el del archivo antes de `.java`.' },
-      { nivel: 2, texto: 'El metodo que Java busca al arrancar se llama `main` y su firma es siempre `public static void main(String[] args)`.' },
+      { nivel: 1, texto: 'El nombre de la clase va después de la palabra `class`, y el del archivo antes de `.java`.' },
+      { nivel: 2, texto: 'El método que Java busca al arrancar se llama `main` y su firma es siempre `public static void main(String[] args)`.' },
       { nivel: 3, texto: 'Para imprimir, el camino es `System.out.println(...)`, con el texto entre comillas dobles y un punto y coma al final.' },
     ],
   },
@@ -107,15 +107,15 @@ export const MISIONES = [
   {
     id: 'fundamentos-02',
     unidad: 'fundamentos',
-    titulo: 'Imprimir con y sin salto de linea',
+    titulo: 'Imprimir con y sin salto de línea',
     modalidad: 'lectura',
     objetivos: [
       'Distinguir `print` de `println`',
-      'Entender que `println` anade un salto de linea al final',
+      'Entender que `println` añade un salto de línea al final',
       'Componer una frase usando varias llamadas seguidas',
     ],
     vocabulario: ['print', 'println', 'System', 'out', 'consola'],
-    glosario: ['salto de linea', 'consola', 'instruccion'],
+    glosario: ['salto de línea', 'consola', 'instrucción'],
     solucion: `public class Main {
   public static void main(String[] args) {
     System.out.print("Hola");
@@ -129,37 +129,37 @@ export const MISIONES = [
     explicacion: [
       {
         tipo: 'parrafo',
-        texto: 'Hay dos formas de imprimir. `println` imprime y ademas salta de linea. `print` imprime y se queda en la misma linea, esperando a que continues tu. La `ln` del final de `println` viene de "linea": es la abreviatura que significa "y salta".',
+        texto: 'Hay dos formas de imprimir. `println` imprime y además salta de línea. `print` imprime y se queda en la misma línea, esperando a que continúes tú. La `ln` del final de `println` viene de "línea": es la abreviatura que significa "y salta".',
       },
       {
         tipo: 'codigo',
         titulo: 'Las dos, juntas',
         codigo: 'System.out.print("Hola");\nSystem.out.print(" ");\nSystem.out.println("mundo");\nSystem.out.print("A");\nSystem.out.println("B");',
         salida: 'Hola mundo\nAB',
-        nota: 'La primera linea necesita tres llamadas porque `print` no anade nada: si solo pones `print("Hola")` y `print("mundo")` verias `HolaMundo` pegado, sin espacio.',
+        nota: 'La primera línea necesita tres llamadas porque `print` no añade nada: si solo pones `print("Hola")` y `print("mundo")` verías `HolaMundo` pegado, sin espacio.',
       },
       {
         tipo: 'tabla',
-        cabeceras: ['Llamada', 'Imprime', 'Salta de linea despues'],
+        cabeceras: ['Llamada', 'Imprime', 'Salta de línea después'],
         filas: [
           ['`print("A")`', 'A', 'No'],
-          ['`println("A")`', 'A', 'Si'],
+          ['`println("A")`', 'A', 'Sí'],
         ],
       },
       {
         tipo: 'aviso',
         tono: 'info',
-        texto: 'El salto de linea de `println` lo anade el propio metodo, invisible en el codigo. Por eso el codigo se ve igual en los dos casos y el resultado no.',
+        texto: 'El salto de línea de `println` lo añade el propio método, invisible en el código. Por eso el código se ve igual en los dos casos y el resultado no.',
       },
       {
         tipo: 'parrafo',
-        texto: 'Tambien existe `printf`, que permite decidir el formato. No lo necesitas todavia: `println` resuelve todo lo de esta unidad y conviene dominarla antes de complicarse.',
+        texto: 'También existe `printf`, que permite decidir el formato. No lo necesitas todavía: `println` resuelve todo lo de esta unidad y conviene dominarla antes de complicarse.',
       },
     ],
     pistas: [
-      { nivel: 1, texto: 'Si dos textos salen pegados, casi siempre falta un `print(" ")` o un `println` donde habia un `print`.' },
-      { nivel: 2, texto: 'Usa `print` mientras quieras seguir en la misma linea y `println` cuando quieras cerrar la.' },
-      { nivel: 3, texto: 'Para unir "Hola" y "mundo" en una linea necesitas tres llamadas: `print("Hola")`, `print(" ")` y `println("mundo")`.' },
+      { nivel: 1, texto: 'Si dos textos salen pegados, casi siempre falta un `print(" ")` o un `println` donde había un `print`.' },
+      { nivel: 2, texto: 'Usa `print` mientras quieras seguir en la misma línea y `println` cuando quieras cerrar la.' },
+      { nivel: 3, texto: 'Para unir "Hola" y "mundo" en una línea necesitas tres llamadas: `print("Hola")`, `print(" ")` y `println("mundo")`.' },
     ],
   },
 
@@ -173,8 +173,8 @@ export const MISIONES = [
       'Usar los escapes `\"` y `\\`',
       'Escribir en Castellano con tildes y ene sin miedo',
     ],
-    vocabulario: ['String', 'escape', 'comillas', 'codificacion', 'UTF-8'],
-    glosario: ['cadena de texto', 'caracter de escape', 'codificacion'],
+    vocabulario: ['String', 'escape', 'comillas', 'codificación', 'UTF-8'],
+    glosario: ['cadena de texto', 'carácter de escape', 'codificación'],
     solucion: `public class Main {
   public static void main(String[] args) {
     System.out.println("Año 2026: la edición \\"especial\\" de Java");
@@ -186,31 +186,31 @@ export const MISIONES = [
     explicacion: [
       {
         tipo: 'parrafo',
-        texto: 'Un texto es una cadena de texto, y las cadenas van siempre entre comillas dobles. Las comillas son el sinal que le dice a Java "esto es texto, no es codigo". Todo lo que pongas dentro se imprime tal cual.',
+        texto: 'Un texto es una cadena de texto, y las cadenas van siempre entre comillas dobles. Las comillas son la señal que le dice a Java "esto es texto, no es código". Todo lo que pongas dentro se imprime tal cual.',
       },
       {
         tipo: 'parrafo',
-        texto: 'El problema aparece cuando el propio texto quiere contener una comilla. Java no puede saber si esa comilla cierra la cadena o es parte del texto, asi que hay que escaparla con una barra invertida delante: `\\"`.',
+        texto: 'El problema aparece cuando el propio texto quiere contener una comilla. Java no puede saber si esa comilla cierra la cadena o es parte del texto, así que hay que escaparla con una barra invertida delante: `\\"`.',
       },
       {
         tipo: 'codigo',
         titulo: 'Comillas y barras de verdad',
         codigo: 'System.out.println("Año 2026: la edición \\"especial\\" de Java");\nSystem.out.println("Ruta: C:\\\\Program Files\\\\Java");\nSystem.out.println("Para un salto de línea de verdad: \\\\n");',
         salida: 'Año 2026: la edición "especial" de Java\nRuta: C:\\Program Files\\Java\nPara un salto de línea de verdad: \\n',
-        nota: 'La ultima linea es la trampa: para que se vea un `\\n` en pantalla hay que escribir `\\\\n`. La barra invertida se escapa a si misma.',
+        nota: 'La última línea es la trampa: para que se vea un `\\n` en pantalla hay que escribir `\\\\n`. La barra invertida se escapa a sí misma.',
       },
       {
         tipo: 'aviso',
         tono: 'atencion',
-        texto: 'En una cadena, la barra invertida siempre significa algo. Si escribes una sola, Java espera un caracter de escape detras y te dira que el escape no es valido. Para una barra de verdad: `\\\\`.',
+        texto: 'En una cadena, la barra invertida siempre significa algo. Si escribes una sola, Java espera un carácter de escape detrás y te dirá que el escape no es válido. Para una barra de verdad: `\\\\`.',
       },
       {
         tipo: 'parrafo',
-        texto: 'Sobre los acentos: escribe Castellano normal. Las cadenas de Java guardan texto en UTF-8, que incluye tildes y ene. Lo unico que hay que vigilar es que el archivo este guardado tambien en UTF-8, que es lo que hacen los editores y el entorno por defecto.',
+        texto: 'Sobre los acentos: escribe Castellano normal. Las cadenas de Java guardan texto en UTF-8, que incluye tildes y ene. Lo único que hay que vigilar es que el archivo esté guardado también en UTF-8, que es lo que hacen los editores y el entorno por defecto.',
       },
     ],
     pistas: [
-      { nivel: 1, texto: 'Si el programa se niega a compilar y no entiendes por que, mira si te has comido una comilla de cierre.' },
+      { nivel: 1, texto: 'Si el programa se niega a compilar y no entiendes por qué, mira si te has comido una comilla de cierre.' },
       { nivel: 2, texto: 'Una comilla doble dentro de un texto se escribe `\\"` (barra invertida delante).' },
       { nivel: 3, texto: 'Para imprimir una barra invertida necesitas dos: `\\\\`.' },
     ],
@@ -223,11 +223,11 @@ export const MISIONES = [
     modalidad: 'lectura',
     objetivos: [
       'Entender que Java ejecuta las instrucciones de arriba abajo',
-      'Distinguir codigo que existe de codigo que se ejecuta',
-      'Comprobar que al llamar a un metodo se vuelve al punto de la llamada',
+      'Distinguir código que existe de código que se ejecuta',
+      'Comprobar que al llamar a un método se vuelve al punto de la llamada',
     ],
-    vocabulario: ['orden', 'ejecucion', 'metodo', 'llamada', 'flujo'],
-    glosario: ['flujo de ejecucion', 'metodo', 'punto de retorno'],
+    vocabulario: ['orden', 'ejecución', 'método', 'llamada', 'flujo'],
+    glosario: ['flujo de ejecución', 'método', 'punto de retorno'],
     solucion: `public class Main {
   public static void main(String[] args) {
     System.out.println("1. Esta linea se imprime");
@@ -244,52 +244,52 @@ export const MISIONES = [
     explicacion: [
       {
         tipo: 'parrafo',
-        texto: 'Java ejecuta de arriba abajo, sin excepciones ni sorpresas al principio. La primera instruccion que encuentra, la ejecuta; luego la siguiente. Ese es todo el modelo mental que necesitas para empezar.',
+        texto: 'Java ejecuta de arriba abajo, sin excepciones ni sorpresas al principio. La primera instrucción que encuentra, la ejecuta; luego la siguiente. Ese es todo el modelo mental que necesitas para empezar.',
       },
       {
         tipo: 'codigo',
-        titulo: 'Un metodo que se llama a mitad del camino',
+        titulo: 'Un método que se llama a mitad del camino',
         codigo: 'public static void main(String[] args) {\n  System.out.println("1. Esta linea se imprime");\n  System.out.println("2. Esta tambien");\n  saludar();\n  System.out.println("4. Y esta es la ultima");\n}\n\nstatic void saludar() {\n  System.out.println("3. Esta la imprime otro metodo");\n}',
         salida: '1. Esta linea se imprime\n2. Esta tambien\n3. Esta la imprime otro metodo\n4. Y esta es la ultima',
       },
       {
         tipo: 'lista',
-        titulo: 'Que pasa en la linea 3',
+        titulo: 'Qué pasa en la línea 3',
         items: [
           'Java encuentra `saludar()` y salta a ejecutarlo.',
-          'El metodo imprime su linea y termina.',
-          'Java vuelve justo despues de la llamada y sigue con la linea 4.',
+          'El método imprime su línea y termina.',
+          'Java vuelve justo después de la llamada y sigue con la línea 4.',
         ],
       },
       {
         tipo: 'parrafo',
-        texto: 'Aqui esta la idea que mas confunde al principio: que el codigo exista no significa que se ejecute. `saludar` esta escrito y no imprime nada hasta que alguien lo llama. Un metodo que nunca se llama es un metodo que nunca corre.',
+        texto: 'Aquí está la idea que más confunde al principio: que el código exista no significa que se ejecute. `saludar` está escrito y no imprime nada hasta que alguien lo llama. Un método que nunca se llama es un método que nunca corre.',
       },
       {
         tipo: 'aviso',
         tono: 'info',
-        texto: 'Los metodos seran el tema de la unidad 5. No hace falta que entiendas su sintaxis todavia: aqui solo importa el efecto que tiene sobre el orden en que se imprime cada cosa.',
+        texto: 'Los métodos serán el tema de la unidad 5. No hace falta que entiendas su síntaxis todavía: aquí solo importa el efecto que tiene sobre el orden en que se imprime cada cosa.',
       },
     ],
     pistas: [
-      { nivel: 1, texto: 'El numero que lleva cada linea no es decorativo: sale en ese orden exacto porque asi esta escrito.' },
-      { nivel: 2, texto: 'Escribe el codigo y luego pon los numeros al final, en el orden en que aparecen en pantalla. Si no cuadran, hay algo que se ejecuta antes de lo que pensabas.' },
-      { nivel: 3, texto: 'Al llamar a `saludar()` el flujo salta a ese metodo, y cuando acaba vuelve a la linea siguiente de donde salio.' },
+      { nivel: 1, texto: 'El número que lleva cada línea no es decorativo: sale en ese orden exacto porque así está escrito.' },
+      { nivel: 2, texto: 'Escribe el código y luego pon los números al final, en el orden en que aparecen en pantalla. Si no cuadran, hay algo que se ejecuta antes de lo que pensabas.' },
+      { nivel: 3, texto: 'Al llamar a `saludar()` el flujo salta a ese método, y cuando acaba vuelve a la línea siguiente de donde salió.' },
     ],
   },
 
   {
     id: 'fundamentos-05',
     unidad: 'fundamentos',
-    titulo: 'Comentarios: hablar con quien relea el codigo',
+    titulo: 'Comentarios: hablar con quien relea el código',
     modalidad: 'lectura',
     objetivos: [
-      'Escribir un comentario de una linea con `//`',
-      'Escribir un comentario de varias lineas con `/* */`',
+      'Escribir un comentario de una línea con `//`',
+      'Escribir un comentario de varias líneas con `/* */`',
       'Entender que los comentarios no cambian lo que hace el programa',
     ],
-    vocabulario: ['comentario', '//', '/*', '*/', 'documentacion'],
-    glosario: ['comentario', 'documentacion', 'codigo muerto'],
+    vocabulario: ['comentario', '//', '/*', '*/', 'documentación'],
+    glosario: ['comentario', 'documentación', 'código muerto'],
     solucion: `public class Main {
   public static void main(String[] args) {
     // Esta linea es un comentario: no hace nada.
@@ -304,7 +304,7 @@ export const MISIONES = [
     explicacion: [
       {
         tipo: 'parrafo',
-        texto: 'Un comentario es una nota para las personas. Java lo lee y lo descarta: no produce ningun efecto en el programa. Se escribe con dos barras `//` y termina en el salto de linea.',
+        texto: 'Un comentario es una nota para las personas. Java lo lee y lo descarta: no produce ningún efecto en el programa. Se escribe con dos barras `//` y termina en el salto de línea.',
       },
       {
         tipo: 'codigo',
@@ -315,20 +315,20 @@ export const MISIONES = [
       {
         tipo: 'aviso',
         tono: 'atencion',
-        texto: 'Un comentario de varias lineas empieza con `/*` y termina con `*/`. Si te olvidas del cierre, todo lo que venga despues queda comentado y el programa deja de funcionar de forma inexplicable.',
+        texto: 'Un comentario de varias líneas empieza con `/*` y termina con `*/`. Si te olvidas del cierre, todo lo que venga después queda comentado y el programa deja de funcionar de forma inexplicable.',
       },
       {
         tipo: 'parrafo',
-        texto: 'Cuando sirvan de algo: para explicar una decision que no es evidente, para separar bloques de un algoritmo, o para dejar claro por que algo esta hecho de una manera rara. Lo que no sirve es reescribir el codigo en Castellano: `// suma a mas` encima de `a + b` no ayuda a nadie.',
+        texto: 'Cuando sirvan de algo: para explicar una decisión que no es evidente, para separar bloques de un algoritmo, o para dejar claro por qué algo está hecho de una manera rara. Lo que no sirve es reescribir el código en Castellano: `// suma a mas` encima de `a + b` no ayuda a nadie.',
       },
       {
         tipo: 'parrafo',
-        texto: 'Un caso especial son los comentarios que empiezan por tres barras, `/** ... */`. Esos no son solo notas: se convierten en documentacion que las herramientas leen al pasar el cursor por encima. Veras muchos en codigo de Java ajeno.',
+        texto: 'Un caso especial son los comentarios que empiezan por tres barras, `/** ... */`. Esos no son solo notas: se convierten en documentación que las herramientas leen al pasar el cursor por encima. Verás muchos en código de Java ajeno.',
       },
     ],
     pistas: [
-      { nivel: 1, texto: 'Un comentario de una linea empieza por `//` y todo lo que haya hasta el final se ignora.' },
-      { nivel: 2, texto: 'Para comentar varias lineas se abre con `/*` y se cierra con `*/`, en ese orden.' },
+      { nivel: 1, texto: 'Un comentario de una línea empieza por `//` y todo lo que haya hasta el final se ignora.' },
+      { nivel: 2, texto: 'Para comentar varias líneas se abre con `/*` y se cierra con `*/`, en ese orden.' },
       { nivel: 3, texto: 'Si comentas algo y el programa deja de funcionar, comprueba que has cerrado el `*/` del comentario de bloque.' },
     ],
   },

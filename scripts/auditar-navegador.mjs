@@ -135,7 +135,7 @@ const RUTAS = [
   { hash: '#/', nombre: 'portada' },
   { hash: '#/unidad/fundamentos', nombre: 'unidad' },
   { hash: '#/mision/fundamentos-01', nombre: 'leccion' },
-  { hash: '#/mision/fundamentos-03', nombre: 'leccion-con-tabla' },
+  { hash: '#/mision/fundamentos-02', nombre: 'leccion-con-tabla' },
   { hash: '#/ruta-inventada', nombre: 'error' },
 ];
 
@@ -258,9 +258,10 @@ async function principal() {
           problemas.push(`${donde}: el foco quedo en "${foco.etiqueta}" y no se ve`);
         }
 
-        /* La tabla de la leccion 3 debe tener su propio scroll, no empujar la
+        /* La tabla de la leccion 2 debe tener su propio scroll, no empujar la
            pagina entera: en un movil de 360 px una tabla de tres columnas se
-           sale si no esta encerrada. */
+           sale si no esta encerrada. La tabla esta en fundamentos-02, que es
+           la leccion de imprimir; la 3 trata de operadores y no tiene ninguna. */
         if (ruta.nombre === 'leccion-con-tabla') {
           const tabla = await pagina.evaluate(() => {
             const envoltura = document.querySelector('.tabla-envoltorio');
@@ -270,7 +271,12 @@ async function principal() {
               overflow: getComputedStyle(envoltura).overflowX,
             };
           });
-          if (tabla && tabla.overflow !== 'auto' && tabla.overflow !== 'scroll') {
+          if (!tabla) {
+            /* Si la tabla no aparece, el chequeo de abajo no miraria nada y pasaria
+               en verde. Es el fallo mas probable: que la ruta apunte a una leccion
+               que ya no tiene tabla. */
+            problemas.push(`${donde}: no se ha encontrado ninguna tabla, el audit no esta mirando nada`);
+          } else if (tabla.overflow !== 'auto' && tabla.overflow !== 'scroll') {
             problemas.push(`${donde}: la tabla no tiene scroll propio (overflow-x: ${tabla.overflow})`);
           }
         }

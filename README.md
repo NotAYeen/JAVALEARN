@@ -84,7 +84,7 @@ npm run preview    # sirve dist/ tal cual se publicara
 ### Comprobaciones
 
 ```bash
-npm test                      # 232 pruebas: motor, scripts, accesibilidad
+npm test                      # 289 pruebas: motor, scripts, accesibilidad
 npm run validate -- --jdk     # contrasta las misiones contra el JDK real
 npm run contrast              # auditoria de contraste WCAG sobre los tokens
 npm run budget                # presupuesto de tamano del bundle

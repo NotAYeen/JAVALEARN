@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Vistas de la aplicacion.
  *
  * Cada vista devuelve una cadena de HTML y nada mas: no tocan el DOM ni
@@ -21,10 +21,10 @@ import { RUTAS, hashDe } from './ruta.js';
 const MODALIDADES = {
   lectura: 'Lectura',
   terminal: 'Terminal',
-  depuracion: 'Depuracion',
-  auditoria: 'Auditoria',
+  depuracion: 'Depuración',
+  auditoria: 'Auditoría',
   ensamblaje: 'Ensamblaje',
-  relacion: 'Relacion',
+  relacion: 'Relación',
 };
 
 /**
@@ -51,33 +51,33 @@ export function vistaPortada() {
     <h1>Java, desde el primer <code>println</code></h1>
 
     <p class="intro">
-      Una ruta para aprender Java de cero a nivel intermedio. Escribes codigo real,
-      lo ejecutas aqui mismo y recibes los errores explicados en castellano, no en
-      ingles de maquina. Funciona en el movil y no necesita instalar nada.
+      Una ruta para aprender Java de cero a nivel intermedio. Escribes código real,
+      lo ejecutas aquí mismo y recibes los errores explicados en castellano, no en
+      inglés de máquina. Funciona en el móvil y no necesita instalar nada.
     </p>
 
     <div class="panel panel--aviso">
-      <p class="panel__titulo"><span aria-hidden="true">&#9888;</span> Que es este entorno</p>
+      <p class="panel__titulo"><span aria-hidden="true">&#9888;</span> Qué es este entorno</p>
       <p>
-        JavaLearn ejecuta Java con un interprete propio escrito en JavaScript, no con
-        una maquina virtual de Java completa. Implementa el subconjunto de Java 8 que
-        necesitan estas misiones, y lo hace <strong>mucho mas rapido</strong> que cargar
-        un compilador entero en un movil. Cuando escribas algo que todavia no soporta,
-        el aviso te lo dira con claridad.
+        JavaLearn ejecuta Java con un intérprete propio escrito en JavaScript, no con
+        una máquina virtual de Java completa. Implementa el subconjunto de Java 8 que
+        necesitan estas misiones, y lo hace <strong>mucho más rápido</strong> que cargar
+        un compilador entero en un móvil. Cuando escribas algo que todavía no soporta,
+        el aviso te lo dirá con claridad.
       </p>
     </div>
 
     <div class="panel panel--aviso">
-      <p class="panel__titulo"><span aria-hidden="true">&#128196;</span> Cuanto hay hecho hoy</p>
+      <p class="panel__titulo"><span aria-hidden="true">&#128196;</span> Cuánto hay hecho hoy</p>
       <p>
         El recorrido completo son <strong>${TOTAL_MISIONES} misiones</strong> en
         ${UNIDADES.length} unidades. Ahora mismo hay
         <strong>${TOTAL_MISIONES_ESCRITAS} publicadas</strong>, todas de la unidad 1 y
-        en modo lectura: se leen, pero todavia no se puede escribir ni ejecutar codigo
-        aqui, porque el interprete sigue en construccion.
+        en modo lectura: se leen, pero todavía no se puede escribir ni ejecutar código
+        aquí, porque el intérprete sigue en construcción.
       </p>
       <p>
-        Se preferia decirte esto a presentar 43 misiones que no existen. Las que faltan
+        Se prefería decirte esto a presentar 43 misiones que no existen. Las que faltan
         se van sumando por tandas, y ninguna se publica sin pasar antes una prueba
         contra el <code>javac</code> de verdad.
       </p>
@@ -87,7 +87,7 @@ export function vistaPortada() {
     <p>
       Seis formas distintas de practicar: leer, escribir en la terminal, depurar,
       auditar, ensamblar y relacionar. Las unidades con contenido publicado se pueden
-      abrir; las demas seiran apareciendo conforme se terminen.
+        abrir; las demás irán apareciendo conforme se terminen.
     </p>
 
     <ol class="rejilla lista-unidades">
@@ -111,7 +111,7 @@ function tarjetaUnidad(unidad) {
           ${
             disponible
               ? `<span class="etiqueta etiqueta--lista">${publicadas} de ${unidad.misiones} publicadas</span>`
-              : '<span class="etiqueta etiqueta--pendiente">En preparacion</span>'
+              : '<span class="etiqueta etiqueta--pendiente">En preparación</span>'
           }
           <span class="tarjeta-unidad__misiones">${unidad.misiones} misiones</span>
         </p>`;
@@ -153,8 +153,8 @@ export function vistaUnidad(unidad) {
     ${
       misiones.length === 0
         ? `<div class="panel panel--vacio">
-             <p class="panel__titulo"><span aria-hidden="true">&#128296;</span> Todavia no hay misiones aqui</p>
-             <p>Esta unidad esta en preparacion. Vuelve mas adelante.</p>
+             <p class="panel__titulo"><span aria-hidden="true">&#128296;</span> Todavía no hay misiones aquí</p>
+             <p>Esta unidad está en preparación. Vuelve más adelante.</p>
              <p><a class="boton boton--secundario" href="${hashDe(RUTAS.PORTADA)}">Volver a la portada</a></p>
            </div>`
         : `<ol class="lista-misiones">
@@ -205,11 +205,11 @@ export function vistaMision(mision, unidad, { anterior, siguiente } = {}) {
     ${
       esLectura
         ? `<div class="panel panel--aviso">
-             <p class="panel__titulo"><span aria-hidden="true">&#128218;</span> Leccion de lectura</p>
-             <p>Esta mision se lee. Todavia no hay editor ni ejecucion: el interprete
-             de JavaLearn esta en construccion y preferimos decirtelo a ponerte un
-             boton que no hace nada.</p>
-             <p>El codigo de ejemplo si es real. Cada fragmento de esta pagina se
+             <p class="panel__titulo"><span aria-hidden="true">&#128218;</span> Lección de lectura</p>
+             <p>Esta misión se lee. Todavía no hay editor ni ejecución: el intérprete
+             de JavaLearn está en construcción y preferimos decírtelo a ponerte un
+             botón que no hace nada.</p>
+             <p>El código de ejemplo sí es real. Cada fragmento de esta página se
              compila y se ejecuta con el <code>javac</code> de verdad antes de
              publicarse, y su salida es la que ves escrita debajo.</p>
            </div>`
@@ -217,7 +217,7 @@ export function vistaMision(mision, unidad, { anterior, siguiente } = {}) {
     }
 
     <section aria-labelledby="objetivos-leccion" class="bloque">
-      <h2 id="objetivos-leccion">Al terminar, sabras</h2>
+      <h2 id="objetivos-leccion">Al terminar, sabrás</h2>
       <ul class="lista-objetivos">
         ${mision.objetivos.map((o) => `<li>${enLinea(o)}</li>`).join('\n        ')}
       </ul>
@@ -230,7 +230,7 @@ export function vistaMision(mision, unidad, { anterior, siguiente } = {}) {
     ${
       mision.vocabulario?.length
         ? `<section aria-labelledby="vocabulario-leccion" class="bloque">
-             <h2 id="vocabulario-leccion">Vocabulario de esta leccion</h2>
+             <h2 id="vocabulario-leccion">Vocabulario de esta lección</h2>
              <ul class="lista-etiquetas">
                ${mision.vocabulario.map((v) => `<li class="etiqueta etiqueta--vocab">${escapar(v)}</li>`).join('\n               ')}
              </ul>
@@ -253,7 +253,7 @@ export function vistaMision(mision, unidad, { anterior, siguiente } = {}) {
       mision.pistas?.length
         ? `<section aria-labelledby="pistas-leccion" class="bloque">
              <h2 id="pistas-leccion">Si te atoras</h2>
-             <p class="nota">De menos a mas. Abrir la ultima sin leer las anteriores
+             <p class="nota">De menos a más. Abrir la última sin leer las anteriores
              se nota, pero nadie te va a impedir hacerlo.</p>
              ${mision.pistas
                .map(
@@ -269,9 +269,9 @@ export function vistaMision(mision, unidad, { anterior, siguiente } = {}) {
 
     <section aria-labelledby="solucion-leccion" class="bloque">
       <h2 id="solucion-leccion">El programa completo</h2>
-      <p class="nota">Este es el programa entero de la leccion. Compila y produce
+      <p class="nota">Este es el programa entero de la lección. Compila y produce
       exactamente la salida que se indica.</p>
-      <pre class="codigo" ${regionDesplazable('Programa completo de la leccion')}><code>${escapar(mision.solucion)}</code></pre>
+      <pre class="codigo" ${regionDesplazable('Programa completo de la lección')}><code>${escapar(mision.solucion)}</code></pre>
       ${
         mision.salidaEsperada !== undefined
           ? `<p class="salida">
@@ -339,7 +339,7 @@ function bloque(b) {
     case 'codigo':
       return `<figure class="ejemplo">
           ${b.titulo ? `<figcaption class="ejemplo__titulo">${enLinea(b.titulo)}</figcaption>` : ''}
-          <pre class="codigo" ${regionDesplazable(`Codigo Java${b.titulo ? `: ${escapar(b.titulo)}` : ''}`)}><code>${escapar(b.codigo)}</code></pre>
+          <pre class="codigo" ${regionDesplazable(`Código Java${b.titulo ? `: ${escapar(b.titulo)}` : ''}`)}><code>${escapar(b.codigo)}</code></pre>
           ${
             b.salida !== undefined
               ? `<p class="salida">
@@ -361,7 +361,7 @@ function bloque(b) {
         </div>`;
 
     case 'tabla':
-      return `<div class="tabla-envoltorio" ${regionDesplazable('Tabla de la leccion')}>
+      return `<div class="tabla-envoltorio" ${regionDesplazable('Tabla de la lección')}>
           <table class="tabla">
             <thead>
               <tr>${b.cabeceras.map((c) => `<th scope="col">${enLinea(c)}</th>`).join('')}</tr>
@@ -396,8 +396,8 @@ function bloque(b) {
 
 export function vistaNoEncontrada() {
   return `
-    <h1 class="titulo-vista">No encontramos esa pagina</h1>
-    <p class="intro">El enlace puede estar mal escrito, o la mision todavia no existe.</p>
+    <h1 class="titulo-vista">No encontramos esa página</h1>
+    <p class="intro">El enlace puede estar mal escrito, o la misión todavía no existe.</p>
     <p><a class="boton boton--principal" href="${hashDe(RUTAS.PORTADA)}">Volver a la portada</a></p>
   `;
 }

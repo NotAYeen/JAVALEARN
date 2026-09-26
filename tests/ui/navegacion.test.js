@@ -105,7 +105,7 @@ describe('portada', () => {
   });
 
   it('marca como no disponible lo que no se puede abrir', () => {
-    expect(html).toContain('En preparacion');
+    expect(html).toContain('En preparación');
   });
 
   it('no usa ningun control que no haga nada', () => {
@@ -140,7 +140,7 @@ describe('lista de misiones de una unidad', () => {
 
   it('lo dice cuando una unidad aun no tiene misiones', () => {
     const vacia = vistaUnidad(UNIDADES.find((u) => u.id === 'bucles'));
-    expect(vacia).toContain('Todavia no hay misiones aqui');
+    expect(vacia).toContain('Todavía no hay misiones aquí');
     expect(vacia).not.toMatch(/href="#\/mision\//);
   });
 });
@@ -176,9 +176,9 @@ describe('leccion', () => {
     expect(html).toContain(escaparTexto(conCodigo.codigo));
   });
 
-  it('dice que es una leccion de lectura y que no se puede ejecutar', () => {
-    expect(html).toContain('Leccion de lectura');
-    expect(html).toContain('Todavia no hay editor');
+  it('dice que es una lección de lectura y que no se puede ejecutar', () => {
+    expect(html).toContain('Lección de lectura');
+    expect(html).toContain('Todavía no hay editor');
   });
 
   it('muestra las pistas de menor a mayor y con details nativo', () => {
@@ -283,7 +283,7 @@ describe('construccion de la vista desde la ruta', () => {
   });
 
   it('devuelve la vista de error directamente', () => {
-    expect(vistaNoEncontrada()).toContain('No encontramos esa pagina');
+    expect(vistaNoEncontrada()).toContain('No encontramos esa página');
   });
 });
 
