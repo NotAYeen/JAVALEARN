@@ -84,7 +84,7 @@ npm run preview    # sirve dist/ tal cual se publicara
 ### Comprobaciones
 
 ```bash
-npm test                      # 111 pruebas: motor, scripts, accesibilidad
+npm test                      # 232 pruebas: motor, scripts, accesibilidad
 npm run validate -- --jdk     # contrasta las misiones contra el JDK real
 npm run contrast              # auditoria de contraste WCAG sobre los tokens
 npm run budget                # presupuesto de tamano del bundle
@@ -107,15 +107,44 @@ medía 22 px de alto.
 
 ```
 src/
-  engine/     el motor de Java: lexer (hecho), parser, interprete, biblioteca
+  engine/     el motor de Java: lexer, parser y AST (hechos), interprete y biblioteca
   worker/     ejecucion aislada del motor (pendiente)
   ui/         rutas, vistas, tema, anuncios a lector de pantalla
-  data/       unidades y misiones
+  data/       unidades, misiones y la tabla de lo que el motor admite
   state/      almacenamiento, progreso
 css/          tokens de tema y estilos
 scripts/      validacion, contraste, iconos, presupuesto, auditoria de navegador
 tests/        pruebas unitarias, de scripts y de accesibilidad
 ```
+
+## El motor
+
+El texto del alumno pasa por tres capas: `lexer` (caracteres a tokens), `parser`
+(tokens a árbol) y, más adelante, `interprete` (árbol a valores).
+
+El parser es descendente recursivo con una tabla de precedencia escrita a mano
+porque tiene que ser **la de Java y no la de JavaScript**: en Java
+`a < b == c` es `(a < b) == c`, y en JavaScript sería `a < (b == c)`. En
+JavaScript además el orden de precedencia está fijo en el lenguaje y no se
+puede cambiar, así que no había opción de «usar el del lenguaje».
+
+Dos cosas que costaron un tropiezo y conviene no volver a tropezar:
+
+- El lector emite `>>` como un token único, porque en el resto de Java es un
+  desplazamiento. En `List<List<String>>` hay que partirlo en dos `>`.
+- En el AST, `tipo` es el nombre del nodo. Un dato con la misma clave lo
+  machacaba en silencio y el árbol quedaba lleno de nodos mal etiquetados que
+  no fallaban hasta mucho después. `nodo()` ahora lo lanza.
+
+`src/data/motor.js` es la lista de lo que el motor admite y lo que no. La
+consulta el parser para redactar sus mensajes, así que la interfaz y los errores
+no pueden contar historias distintas. Hay una prueba que recorre la tabla y
+falla si promete algo que el parser no acepta.
+
+Las pruebas del parser contrastan con `javac` real: para todo lo que el motor
+dice admitir, tienen que coincidir en qué se acepta y en qué se rechaza. Los
+errores de tipo quedan fuera a propósito, porque esa capa todavía no existe;
+está escrito en la propia prueba para que nadie lo lea como un descuido.
 
 ## Temario
 
@@ -144,15 +173,18 @@ Publicado en <https://notayeen.github.io/JAVALEARN/>.
 | 1. Lector léxico | completada |
 | 2. Navegación, rutas y vistas de lectura | completada |
 | 2b. Misiones de la unidad 1 (modo lectura) | completada, 5 de 43 |
-| 3. Parser | pendiente |
-| 4. Intérprete y biblioteca | pendiente |
+| 3. Parser y AST | completada |
+| 4. Verificador de tipos, intérprete y biblioteca | pendiente |
 | 5. Editor y ejecución en el navegador | pendiente |
 | 6. Modalidades de interacción | pendiente |
 | 7. Misiones restantes y glosario | pendiente |
 | 8. PWA, logros, pulido | pendiente |
 
 **Lo que se puede hacer hoy:** navegar por la unidad 1 y leer sus cinco
-lecciones, con ejemplos de código, tablas, pistas y glosario.
+lecciones, con ejemplos de código, tablas, pistas y glosario. El motor ya
+entiende la sintaxis de Java de esos cinco programas: el parser los analiza y
+una prueba lo comprueba contra el JDK real. Lo que todavía no hace es mirar los
+tipos.
 
 **Lo que no:** escribir ni ejecutar código. El intérprete todavía no existe, y
 la portada lo dice en el sitio en lugar de esconderlo detrás de un botón que no

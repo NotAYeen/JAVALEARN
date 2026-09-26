@@ -6,7 +6,7 @@
  */
 
 export class ErrorJava extends Error {
-  constructor(mensaje, { linea = 0, columna = 0, longitud = 1, codigo = null } = {}) {
+  constructor(mensaje, { linea = 0, columna = 0, longitud = 1, codigo = null, ayuda = null } = {}) {
     super(mensaje);
     this.name = new.target.name;
     this.mensaje = mensaje;
@@ -14,6 +14,10 @@ export class ErrorJava extends Error {
     this.columna = columna;
     this.longitud = Math.max(1, longitud | 0);
     this.codigo = codigo;
+    /* `ayuda` es lo que el alumno puede hacer a continuacion. Un mensaje que
+       solo dice que fallo obliga a adivinar; uno que ademas dice que escribir
+       es la diferencia entre entender el error y resignarse a el. */
+    this.ayuda = ayuda;
   }
 }
 

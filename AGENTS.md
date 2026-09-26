@@ -56,6 +56,24 @@ instalan solos.
   partirlo al analizar los genéricos `List<List<String>>`.
 - `long` se representa con `Number`, no con `BigInt`. Está por debajo de 2^53:
   documentado, y suficiente para estas misiones.
+- La precedencia es **la de Java, no la de JavaScript**. `a < b == c` en Java es
+  `(a < b) == c`; en JavaScript sería `a < (b == c)`. La tabla está escrita a
+  mano en `parser.js` y en JavaScript el orden de precedencia está *hardcodeado
+  en el lenguaje*, así que copiarlo no es opción. El caso que más se nota:
+  `&&` liga más fuerte que `||`, y en los dos lo hace igual; pero `|` liga más
+  flojo que `==`, cosa que en JavaScript no ocurre.
+- En el AST, `tipo` es el nombre del nodo. Un dato que se llame `tipo`
+  machacaría ese nombre y el nodo dejaría de poder localizarse: ya pasó, y el
+  síntoma fue un árbol lleno de nodos mal etiquetados que no fallaba hasta
+  mucho después. `nodo()` lo lanza si lo ves, y los datos llevan `tipoDeclarado`,
+  `tipoParametro`, `tipoCampo`, `tipoElemento` o `tipoDestino`.
+- La tabla de «soportado / no soportado» vive en `src/data/motor.js` y la
+  consulta el parser para redactar sus mensajes. Si añades una fila, hay que
+  enseñarle al parser a rechazarla: hay una prueba que recorre la tabla y falla
+  si promete algo que el parser no acepta.
+- El contraste con el JDK en `tests/engine/parser.test.js` compara **sintaxis**.
+  Los errores de tipo los detecta el verificador de tipos, que aún no existe;
+  hay una prueba que deja escrito que esos casos se aceptan hoy a propósito.
 
 ## Accesibilidad: no es un extra
 
