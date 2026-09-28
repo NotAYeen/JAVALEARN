@@ -179,17 +179,33 @@ export class App {
     }
 
     setupTabs() {
-        const tabs = ['editor', 'schema', 'mission'];
-        tabs.forEach((name) => {
-            $(`tab-btn-${name}`).addEventListener('click', () => {
-                tabs.forEach((t) => {
-                    const layout = $(`layout-${t === 'editor' ? 'mid' : t}`);
-                    layout.classList.toggle('mobile-show-panel', t === name);
-                    layout.classList.toggle('mobile-hide-panel', t !== name);
-                    $(`tab-btn-${t}`).classList.toggle('active', t === name);
-                    $(`tab-btn-${t}`).setAttribute('aria-selected', String(t === name));
-                });
+        // En movil solo se ve un panel a la vez: el mapa es explicito porque los
+        // ids de los paneles no siguen el nombre de la pestana.
+        const tabs = [
+            { name: 'editor', layout: 'layout-mid' },
+            { name: 'schema', layout: 'layout-left' },
+            { name: 'mission', layout: 'layout-right' }
+        ];
+
+        this.selectTab = (active) => {
+            tabs.forEach(({ name, layout }) => {
+                const panel = $(layout);
+                const btn = $(`tab-btn-${name}`);
+                const isActive = name === active;
+                if (panel) {
+                    panel.classList.toggle('mobile-show-panel', isActive);
+                    panel.classList.toggle('mobile-hide-panel', !isActive);
+                }
+                if (btn) {
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-selected', String(isActive));
+                }
             });
+        };
+
+        tabs.forEach(({ name }) => {
+            const btn = $(`tab-btn-${name}`);
+            if (btn) btn.addEventListener('click', () => this.selectTab(name));
         });
     }
 
