@@ -3,7 +3,7 @@
 Ruta interactiva para aprender Java de cero a nivel intermedio, dentro del
 navegador y sin instalar nada.
 
-- **Web:** https://notayeen.github.io/javalearn/
+- **Web:** https://notayeen.github.io/JAVALEARN/
 - **Licencia:** ISC
 - **Publicación:** GitHub Pages, sitio estático sin servidor
 
