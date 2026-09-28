@@ -1,0 +1,32 @@
+{
+  "name": "javalearn",
+  "version": "1.0.0",
+  "description": "Simulador interactivo para aprender y practicar Java en el navegador (motor Java propio en JS, verificado con JDK 17 real).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "validate": "node scripts/validate-levels.mjs",
+    "record": "node scripts/record-differential.mjs",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "java",
+    "simulador",
+    "jvm",
+    "interprete",
+    "educativo",
+    "wasm-free"
+  ],
+  "author": "notayeen",
+  "license": "ISC",
+  "dependencies": {
+    "sortablejs": "^1.15.7",
+    "vite": "^8.3.0"
+  },
+  "devDependencies": {
+    "terser": "^5.49.0",
+    "vitest": "^5.0.1"
+  }
+}

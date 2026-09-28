@@ -1,0 +1,157 @@
+[
+  {
+    "name": "hola",
+    "ok": true,
+    "stdout": "Hola, Java!\n"
+  },
+  {
+    "name": "literales",
+    "ok": true,
+    "stdout": "42\n3.5\n0.30000000000000004\n100\n1.0\n1.0E10\n1.0E-5\n1.0E7\n1.0E-4\ntrue\nA\ntab\there\n1000000\n0.3333333333333333\n1.1\n"
+  },
+  {
+    "name": "aritmetica",
+    "ok": true,
+    "stdout": "3\n2\n-3\n-2\n3.4\n-3.5\n-2147483648\n1\n7\n6\n1024\n-4\n15\n-6\n"
+  },
+  {
+    "name": "cadenas",
+    "ok": true,
+    "stdout": "Hola 42\n4\no\nHOLAhola\n2\ntrue\ntrue\nHoLa\n3\nx-y-z\npadded|\n-1\nxxx\n1.0\n"
+  },
+  {
+    "name": "conversiones",
+    "ok": true,
+    "stdout": "3\n-3\n1000000000000000000\n3.5\n3.5\nB\n65\nB\n124\nff\n900000\n2.5\ntrue\nQ\ntrue\n"
+  },
+  {
+    "name": "condicionales",
+    "ok": true,
+    "stdout": "impar\ngrande\nfalse\ntrue\nfalse\ntrue\n"
+  },
+  {
+    "name": "bucles",
+    "ok": true,
+    "stdout": "10\n3\n4\n15\n66\n3\n"
+  },
+  {
+    "name": "arreglos",
+    "ok": true,
+    "stdout": "4\n6\n30\n3\n2\n0\nadios\n9\n"
+  },
+  {
+    "name": "var",
+    "ok": true,
+    "stdout": "5\n1.5\ntexto\ntrue\nz\n3\n"
+  },
+  {
+    "name": "clases",
+    "ok": true,
+    "stdout": "5\n18\nCaja(9)\n2\nfalse\nfalse\ntrue\n"
+  },
+  {
+    "name": "herencia",
+    "ok": true,
+    "stdout": "Rex: Guau\nGuau\nRex\ntrue\n"
+  },
+  {
+    "name": "interfaces",
+    "ok": true,
+    "stdout": "Hola Ana\n>Hola Ana\n"
+  },
+  {
+    "name": "enum",
+    "ok": true,
+    "stdout": "VERDE\n1\nVERDE\n2\n3\n2\nROJO VERDE AZUL \nv\n"
+  },
+  {
+    "name": "record",
+    "ok": true,
+    "stdout": "3\n4\n7\nPunto[x=3, y=4]\ntrue\n"
+  },
+  {
+    "name": "excepciones",
+    "ok": true,
+    "stdout": "10\nerror negativo 1\nfin\ndiv\nFor input string: \"x\"\nnpe\nf1\ncaught a\nmulti\n"
+  },
+  {
+    "name": "switch-moderno",
+    "ok": false,
+    "stdout": ""
+  },
+  {
+    "name": "lambdas",
+    "ok": true,
+    "stdout": "5\n20\n12\n9\n"
+  },
+  {
+    "name": "stringbuilder",
+    "ok": true,
+    "stdout": "Hola 42true\n11\nxabc\ncbax\nhola!\n"
+  },
+  {
+    "name": "math",
+    "ok": true,
+    "stdout": "5\n7\n3\n1.4142135623730951\n1024.0\n2.0\n3.0\n3\n-2\n3.141592653589793\nInfinity\n-Infinity\nNaN\n2\n"
+  },
+  {
+    "name": "printf",
+    "ok": true,
+    "stdout": "5 x 2.500000\n   42|42   |00042\n3.142 2.6\ntrue\n1,234,567\nff FF 10\n100% listo\n"
+  },
+  {
+    "name": "sobrecarga",
+    "ok": true,
+    "stdout": "3\n4.0\nab\n6\n8\n2.0\n"
+  },
+  {
+    "name": "final-y-estatica",
+    "ok": true,
+    "stdout": "10\n20\n5\n"
+  },
+  {
+    "name": "inicializadores",
+    "ok": true,
+    "stdout": "bloque\nbloque B\n11\n6\n"
+  },
+  {
+    "name": "varargs",
+    "ok": true,
+    "stdout": "6\n0\n-a-b-c\n30\n"
+  },
+  {
+    "name": "orden-eval",
+    "ok": true,
+    "stdout": "campo\n"
+  },
+  {
+    "name": "listas",
+    "ok": true,
+    "stdout": "2\nab\na-b-\n[1, 2, 3]\n"
+  },
+  {
+    "name": "mapas",
+    "ok": true,
+    "stdout": "3\nfalse\n2\n"
+  },
+  {
+    "name": "abstracta",
+    "ok": true,
+    "stdout": "figura 9.0\ntrue\n"
+  },
+  {
+    "name": "interfaz-estatica",
+    "ok": true,
+    "stdout": "42\n42\n"
+  },
+  {
+    "name": "cadenas2",
+    "ok": true,
+    "stdout": "JAVA 4 J\n3\nx tiene 5\nhola\nHola|xxx|bc\n"
+  },
+  {
+    "name": "numeros",
+    "ok": true,
+    "stdout": "9000000000\n410065408\n-2147483648\n9223372036854775807\n0.33333334\n0.30000000000000004\n3.5\n5 3 1\n101 255\n"
+  }
+]
