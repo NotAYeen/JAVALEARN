@@ -1230,7 +1230,7 @@ class Parser {
             return { type: 'Name', name: t.value, line: t.line, col: t.col };
         }
         if (t.type === 'keyword' && isPrimitiveType(t.value)) {
-            // p.ej. int.class  o 出现 en un contexto inesperado
+            // p.ej. int.class  o algo similar en un contexto inesperado
             const type = this.parseTypeRef(false);
             return { type: 'ClassLiteral', targetType: type, name: null, line: t.line, col: t.col };
         }

@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  // Rutas relativas: el sitio se sirve desde https://<usuario>.github.io/javalearn/
+  // y una ruta absoluta (/assets/...) apuntaría a la raiz del dominio y daria 404.
+  base: './',
   build: {
     outDir: '.',
     emptyOutDir: false,
