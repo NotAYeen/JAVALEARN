@@ -1150,6 +1150,14 @@ export class JavaEngine {
             }
         }
 
+        // 1 bis) Llamada a super: se resuelve SIEMPRE en la superclase. Si se dejara
+        // caer en el paso 2, el target evaluaría a thisObj y un método sobrescrito
+        // se llamaría a sí mismo indefinidamente.
+        if (node.target && node.target.type === 'Super') {
+            const args = this.evalArgs(node.args, env, argTypes);
+            return this.invokeOnThis(env, node.name, args, argTypes, node);
+        }
+
         // 2) ¿Llamada sobre valor local/campo?
         let receiver = null;
         let receiverType = null;
@@ -1310,9 +1318,26 @@ export class JavaEngine {
         if (name === 'super' || (node.target && node.target.type === 'Super')) {
             const sup = obj.cls.superClass;
             if (!sup) throw new EngineError('no hay superclase');
-            const def = this.pickMethod(sup, name, args.length, argTypes, false);
-            if (def) return this.invokeUserMethod(def, obj, args, argTypes, sup);
-            return this.invokeInstance(obj, name, args, argTypes, node);
+            // Se recorre la cadena de superclases sin volver a la clase actual:
+            // si el método no está sobrescrito arriba, se usan los nativos.
+            let cur = sup;
+            while (cur) {
+                const def = this.pickMethod(cur, name, args.length, argTypes, false);
+                if (def) return this.invokeUserMethod(def, obj, args, argTypes, cur);
+                const nat = this.nativeMethod(cur, name, args.length);
+                if (nat) return this.wrapNative(nat([obj, ...args], { types: [cur.name, ...argTypes], interp: this }), cur, name, args.length);
+                for (const iface of cur.interfaces || []) {
+                    const idef = this.pickMethod(iface, name, args.length, argTypes, false);
+                    if (idef) return this.invokeUserMethod(idef, obj, args, argTypes, iface);
+                }
+                cur = cur.superClass;
+            }
+            const objNative = this.nativeMethod(this.classes.get('Object'), name, args.length);
+            if (objNative) return objNative([obj, ...args], { types: [obj.cls.name, ...argTypes] });
+            throw new JavaCompileError(
+                `cannot find symbol\n  symbol: method ${name}(${this.prettyTypes(argTypes)})\n  location: class ${sup.name}`,
+                node ? node.line : 0, node ? node.col : 0
+            );
         }
         return this.invokeInstance(obj, name, args, argTypes, node);
     }
@@ -1937,18 +1962,45 @@ export class JavaEngine {
         }
     }
 
+    /**
+     * Clase envoltorio que corresponde al valor real. No se puede fiar del tipo
+     * estático: `Object n = 5; n instanceof Integer` es true en Java, así que
+     * manda el valor en memoria.
+     */
+    wrapperClassOf(value, tipoEstatico) {
+        if (typeof value === 'string') return this.classes.get('String');
+        if (typeof value === 'boolean') return this.classes.get('Boolean');
+        if (typeof value !== 'number') return null;
+        if (tipoEstatico === 'double' || tipoEstatico === 'float' || tipoEstatico === 'Double') return this.classes.get('Double');
+        if (tipoEstatico === 'long' || tipoEstatico === 'Long') return this.classes.get('Long');
+        if (tipoEstatico === 'char' || tipoEstatico === 'Character') return this.classes.get('Character');
+        return this.classes.get(Number.isInteger(value) ? 'Integer' : 'Double');
+    }
+
     evalInstanceOf(node, env) {
         const value = this.eval(node.expr, env);
         const target = this.typeLabel(node.targetType);
         if (value === null) return false;
+        const targetCls = this.classes.get(target);
+        if (!targetCls) return false;
+
+        const objectCls = this.classes.get('Object');
+        let cls;
         if (isObject(value)) {
-            const cls = this.classes.get(target);
-            if (!cls) return false;
-            const ok = value.cls.isSubclassOf(cls);
-            if (ok && node.binding) env.declare(node.binding, target, value);
-            return ok;
+            cls = value.cls;
+        } else {
+            // Un primitivo se compara contra su envoltorio: "texto" instanceof String.
+            cls = this.wrapperClassOf(value, this.inferType(node.expr, env));
         }
-        return false;
+        if (!cls) return false;
+
+        const numerico = targetCls === this.classes.get('Number')
+            && cls !== this.classes.get('String')
+            && cls !== this.classes.get('Boolean')
+            && cls !== this.classes.get('Character');
+        const ok = cls.isSubclassOf(targetCls) || targetCls === objectCls || numerico;
+        if (ok && node.binding) env.declare(node.binding, target, value);
+        return ok;
     }
 
     /* ------------------------------ iteración ------------------------------ */

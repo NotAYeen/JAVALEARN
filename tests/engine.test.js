@@ -79,6 +79,71 @@ describe('Motor Java: contrato de errores', () => {
         expect(entreTextos.ok).toBe(true);
         expect(entreTextos.stdout).toBe('igual\n');
     });
+
+    it('super.mtodo() se resuelve en la superclase y no se llama a si mismo', () => {
+        const codigo = wrapper(
+            'B b = new B(); System.out.println(b.f());',
+            `static class A { String f() { return "A"; } }
+             static class B extends A { String f() { return "B" + super.f(); } }`
+        );
+        const res = runJava(codigo);
+        expect(res.ok, res.error ? res.error.message : '').toBe(true);
+        expect(res.stdout).toBe('BA\n');
+    });
+
+    it('el constructor de la subclase puede delegar en super()', () => {
+        const codigo = wrapper(
+            'System.out.println(new Perro("Rex", 3).describir());',
+            `static class Animal {
+                 String nombre;
+                 Animal(String nombre) { this.nombre = nombre; }
+                 String describir() { return nombre + " es un animal"; }
+             }
+             static class Perro extends Animal {
+                 int patas;
+                 Perro(String nombre, int patas) { super(nombre); this.patas = patas; }
+                 String describir() { return super.describir() + " con " + patas + " patas"; }
+             }`
+        );
+        const res = runJava(codigo);
+        expect(res.ok, res.error ? res.error.message : '').toBe(true);
+        expect(res.stdout).toBe('Rex es un animal con 3 patas\n');
+    });
+
+    it('instanceof reconoce envoltorios de primitivos y Object', () => {
+        const codigo = wrapper(
+            'Object s = "texto"; Object n = 5; Object d = 5.5; Object b = true; Object nulo = null;',
+            ''
+        );
+        const conChecks = codigo.replace(
+            'Object nulo = null;',
+            `Object nulo = null;
+             System.out.println(s instanceof String);
+             System.out.println(s instanceof Object);
+             System.out.println(n instanceof Integer);
+             System.out.println(n instanceof Object);
+             System.out.println(n instanceof Number);
+             System.out.println(d instanceof Double);
+             System.out.println(b instanceof Boolean);
+             System.out.println(nulo instanceof String);`
+        );
+        const res = runJava(conChecks);
+        expect(res.ok, res.error ? res.error.message : '').toBe(true);
+        expect(res.stdout).toBe('true\ntrue\ntrue\ntrue\ntrue\ntrue\ntrue\nfalse\n');
+    });
+
+    it('instanceof distingue clases hermanas', () => {
+        const codigo = wrapper(
+            'System.out.println(new Perro() instanceof Animal);',
+            `static class Animal { }
+             static class Gato extends Animal { }
+             static class Perro extends Animal { }
+             static class Raton { }`
+        );
+        const res = runJava(codigo);
+        expect(res.ok, res.error ? res.error.message : '').toBe(true);
+        expect(res.stdout).toBe('true\n');
+    });
 });
 
 describe('Motor Java: caso base de la clase Mision', () => {

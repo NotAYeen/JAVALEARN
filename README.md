@@ -43,6 +43,10 @@ El validador comprueba, para cada misión:
 2. Que la solución compila y produce `expected_output` en el motor propio.
 3. Que el JDK real produce exactamente la misma salida.
 4. Que el código defectuoso de un nivel de Depuración no pasa la misión.
+5. Que el código auditado de un nivel de Auditoría no pasa la misión y que
+   `token_error_index` apunta a la única línea distinta de la solución.
+6. Que el programa ensamblado de un nivel de Ensamblaje compila y produce la
+   salida esperada.
 
 Además hay un banco de 31 casos diferenciales (`tests/cases.js`) con su
 resultado grabado en `tests/fixtures/differential.json`, que se ejecuta en cada
@@ -53,8 +57,8 @@ resultado grabado en `tests/fixtures/differential.json`, que se ejecuta en cada
 ```bash
 npm install
 npm run dev        # servidor de desarrollo
-npm test           # 60 tests (motor, niveles, worker)
-npm run validate   # valida los 18 niveles sin JDK
+npm test           # 79 tests (motor, niveles, worker y modos)
+npm run validate   # valida los 32 niveles sin JDK
 npm run build      # genera bundle.js y assets/java-worker.js en la raíz
 ```
 
@@ -66,7 +70,7 @@ bundle.js               salida de build, se despliega tal cual
 assets/java-worker.js   motor Java en un Web Worker
 src/main.js             arranque
 src/App.js              interfaz y modos de juego
-src/levels.js           las 18 misiones
+src/levels.js           las 32 misiones
 src/JavaRunner.js       worker con repliegue en línea y límites de tiempo
 src/editor.js           editor CodeMirror con sugerencias
 src/compare.js          comparación de salidas
@@ -88,10 +92,10 @@ scripts/                validación y grabación diferencial
 
 | Modo | Qué hace el alumno | Misiones |
 |---|---|---|
-| Terminal | Completa el programa hasta que la salida coincide | 13 |
-| Depuración | Arregla un programa con un fallo concreto | 3 |
-| Auditoría | Señala la línea responsable del fallo | 1 |
-| Ensamblaje | Reordena las piezas hasta formar un programa válido | 0 (próximamente) |
+| Terminal | Completa el programa hasta que la salida coincide | 21 |
+| Depuración | Arregla un programa con un fallo concreto | 5 |
+| Auditoría | Señala la línea responsable del fallo | 3 |
+| Ensamblaje | Reordena las piezas hasta formar un programa válido | 3 |
 
 ## Motor
 

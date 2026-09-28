@@ -379,5 +379,376 @@ export const LEVELS = [
       "sumar(int... numeros) acepta 0, 1 o muchos argumentos."
     ],
     "keywords": ["static", "String", "int...", "return", "for"]
+  },
+  {
+    "id_nivel": "mision_19",
+    "title": "Mapa del Termómetro",
+    "dificultad": "Avanzado",
+    "modalidad": "Ensamblaje",
+    "briefing_mision": "La estación meteorológica perdió el orden de su programa. Coloca las piezas para que recorra las dos mediciones de cada muestra y etiquete cada temperatura como calido o frio.",
+    "init_code": "",
+    "dnd_blocks": [
+      "public class Mision {",
+      "    public static void main(String[] args) {",
+      "        int[][] muestras = { {18, 24}, {30, 12} };",
+      "        for (int[] par : muestras) {",
+      "            for (int t : par) {",
+      "                if (t >= 20) {",
+      "                    System.out.println(t + \" calido\");",
+      "                } else {",
+      "                    System.out.println(t + \" frio\");",
+      "                }",
+      "            }",
+      "        }",
+      "    }",
+      "}"
+    ],
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        int[][] muestras = { {18, 24}, {30, 12} };\n        for (int[] par : muestras) {\n            for (int t : par) {\n                if (t >= 20) {\n                    System.out.println(t + \" calido\");\n                } else {\n                    System.out.println(t + \" frio\");\n                }\n            }\n        }\n    }\n}\n",
+    "expected_output": "18 frio\n24 calido\n30 calido\n12 frio",
+    "conceptos": [
+      "Un array de arrays es una matriz: int[][] guarda filas de int.",
+      "El for-each exterior recorre cada fila (int[] par).",
+      "El for-each interior recorre cada temperatura (int t).",
+      "La condición t >= 20 decide qué rama del if se ejecuta."
+    ],
+    "pistas": [
+      "El bucle de las filas va fuera del bucle de las temperaturas.",
+      "La llave del else va pegada al if: } else { en la misma pieza."
+    ],
+    "keywords": ["int[][]", "for", "if", "else", ">="]
+  },
+  {
+    "id_nivel": "mision_20",
+    "title": "Sumario de Turnos",
+    "dificultad": "Avanzado",
+    "modalidad": "Depuración",
+    "briefing_mision": "El panel de turnos muestra un total que no cuadra con los horarios reales. Ejecuta el programa, compara el total con los turnos y corrige la línea que rompe la suma.",
+    "init_code": "",
+    "query_defectuoso": "public class Mision {\n    public static void main(String[] args) {\n        int[] turnos = {8, 6, 10, 12};\n        int total = 0;\n        for (int i = 0; i < turnos.length; i++) {\n            total = total + i;\n        }\n        System.out.println(\"total \" + total);\n        System.out.println(\"media \" + (total / turnos.length));\n    }\n}\n",
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        int[] turnos = {8, 6, 10, 12};\n        int total = 0;\n        for (int i = 0; i < turnos.length; i++) {\n            total = total + turnos[i];\n        }\n        System.out.println(\"total \" + total);\n        System.out.println(\"media \" + (total / turnos.length));\n    }\n}\n",
+    "expected_output": "total 36\nmedia 9",
+    "explicacion": "Dentro del bucle se estaba sumando i, el índice, en lugar del valor del turno. Sumando los índices 0, 1, 2 y 3 el total era 6; la solución suma turnos[i], que da 8 + 6 + 10 + 12 = 36.",
+    "conceptos": [
+      "El índice i va de 0 a turnos.length - 1.",
+      "turnos[i] accede al turno que toca, i solo es la posición.",
+      "La media entera se obtiene con división entre dos int."
+    ],
+    "pistas": [
+      "El total sale mucho más bajo que 8 + 6 + 10 + 12.",
+      "Dentro del bucle se está sumando el índice en vez del valor del turno."
+    ],
+    "keywords": ["for", "i", "turnos[i]", "total"]
+  },
+  {
+    "id_nivel": "mision_21",
+    "title": "Semáforo de Envíos",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "El centro logístico clasifica sus pedidos con un enum. Recorre los tres estados posibles y muestra, para cada pedido, su posición y su mensaje.",
+    "init_code": "public class Mision {\n    enum Pedido {\n        // declara aqui los estados del pedido\n    }\n\n    public static void main(String[] args) {\n        // recorre el array de pedidos y usa switch\n    }\n}\n",
+    "solution_code": "public class Mision {\n    enum Pedido { PENDIENTE, ENVIADO, ENTREGADO }\n\n    public static void main(String[] args) {\n        Pedido[] pedidos = { Pedido.ENTREGADO, Pedido.PENDIENTE, Pedido.ENVIADO };\n        for (Pedido p : pedidos) {\n            switch (p) {\n                case PENDIENTE:\n                    System.out.println(\"pedido \" + p.ordinal() + \" pendiente\");\n                    break;\n                case ENVIADO:\n                    System.out.println(\"pedido \" + p.ordinal() + \" en camino\");\n                    break;\n                case ENTREGADO:\n                    System.out.println(\"pedido \" + p.ordinal() + \" completado\");\n                    break;\n            }\n        }\n        System.out.println(Pedido.values().length);\n    }\n}\n",
+    "expected_output": "pedido 2 completado\npedido 0 pendiente\npedido 1 en camino\n3",
+    "conceptos": [
+      "Un enum declara los valores constantes posibles.",
+      "ordinal() devuelve la posición del valor empezando en 0.",
+      "values() devuelve un array con todos los valores del enum.",
+      "switch sobre enum usa los nombres de las constantes, sin comillas."
+    ],
+    "pistas": [
+      "Los estados se escriben separados por comas: PENDIENTE, ENVIADO, ENTREGADO.",
+      "En cada case del switch hay un break para no seguir con el siguiente."
+    ],
+    "keywords": ["enum", "switch", "case", "break", "ordinal()", "values()"]
+  },
+  {
+    "id_nivel": "mision_22",
+    "title": "Cálculo de Áreas",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "La fábrica necesita una misma receta para cada figura. Crea la interfaz Forma con area() y nombre(), implementa un triángulo y un círculo, y suma todas las áreas en un array de formas.",
+    "init_code": "public class Mision {\n    interface Forma {\n        // declara area() y nombre()\n    }\n\n    public static void main(String[] args) {\n        // crea un array Forma con un triángulo y un círculo\n    }\n}\n",
+    "solution_code": "public class Mision {\n    interface Forma {\n        double area();\n        String nombre();\n    }\n\n    static class Triangulo implements Forma {\n        double base;\n        double altura;\n        Triangulo(double base, double altura) { this.base = base; this.altura = altura; }\n        public double area() { return base * altura / 2; }\n        public String nombre() { return \"triangulo\"; }\n    }\n\n    static class Circulo implements Forma {\n        double radio;\n        Circulo(double radio) { this.radio = radio; }\n        public double area() { return Math.PI * radio * radio; }\n        public String nombre() { return \"circulo\"; }\n    }\n\n    public static void main(String[] args) {\n        Forma[] formas = { new Triangulo(4, 5), new Circulo(2) };\n        double total = 0;\n        for (Forma f : formas) {\n            System.out.println(f.nombre() + \" \" + f.area());\n            total = total + f.area();\n        }\n        System.out.println(\"total \" + total);\n    }\n}\n",
+    "expected_output": "triangulo 10.0\ncirculo 12.566370614359172\ntotal 22.566370614359172",
+    "conceptos": [
+      "Una interfaz declara métodos que toda clase que la implemente debe definir.",
+      "implements Forma obliga a escribir area() y nombre() en la clase.",
+      "Un array de interfaz admite clases distintas: eso es polimorfismo.",
+      "El bucle llama a area() en la versión de cada objeto."
+    ],
+    "pistas": [
+      "Los métodos de la interfaz se declaran sin cuerpo: double area();",
+      "Triangulo(4, 5) usa base 4 y altura 5; Circulo(2) usa radio 2."
+    ],
+    "keywords": ["interface", "implements", "static class", "new", "for"]
+  },
+  {
+    "id_nivel": "mision_23",
+    "title": "Almacén Vacío",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "Un pedido sin existencias no debe tumbar el programa. Lanza la excepción, captura el aviso y confirma cada revisión del almacén en el bloque finally.",
+    "init_code": "public class Mision {\n    public static void main(String[] args) {\n        int[] stock = {5, 0, 3};\n        int[] pedido = {2, 4, 1};\n        for (int i = 0; i < pedido.length; i++) {\n            // try: lanza la excepcion si no hay stock\n            // catch: muestra el mensaje del error\n            // finally: confirma la revision del item\n        }\n    }\n}\n",
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        int[] stock = {5, 0, 3};\n        int[] pedido = {2, 4, 1};\n        for (int i = 0; i < pedido.length; i++) {\n            try {\n                if (stock[i] < pedido[i]) {\n                    throw new IllegalStateException(\"sin stock del item \" + i);\n                }\n                System.out.println(\"enviado \" + pedido[i]);\n            } catch (IllegalStateException e) {\n                System.out.println(\"error: \" + e.getMessage());\n            } finally {\n                System.out.println(\"revisado item \" + i);\n            }\n        }\n    }\n}\n",
+    "expected_output": "enviado 2\nrevisado item 0\nerror: sin stock del item 1\nrevisado item 1\nenviado 1\nrevisado item 2",
+    "conceptos": [
+      "throw lanza una excepción y detiene el bloque actual.",
+      "try ejecuta el código que puede fallar.",
+      "catch captura la excepción indicada y permite seguir.",
+      "finally se ejecuta siempre, haya error o no."
+    ],
+    "pistas": [
+      "El item 1 no tiene existencias: por eso aparece un error en medio.",
+      "getMessage() devuelve el texto que se pasó al constructor de la excepción."
+    ],
+    "keywords": ["try", "throw", "catch", "finally", "getMessage()"]
+  },
+  {
+    "id_nivel": "mision_24",
+    "title": "Informe de Tareas",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "El informe se compone por partes para no crear una cadena en cada paso. Monta el texto con StringBuilder, numera las tareas con formato y cierra con printf.",
+    "init_code": "public class Mision {\n    public static void main(String[] args) {\n        StringBuilder informe = new StringBuilder();\n        String[] tareas = {\"recoger\", \"revisar\", \"enviar\"};\n        // cabecera, separador, lista numerada y pie\n    }\n}\n",
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        StringBuilder informe = new StringBuilder();\n        informe.append(\"Informe de \").append(2026).append(\"\\n\");\n        informe.append(\"----------------\\n\");\n        String[] tareas = {\"recoger\", \"revisar\", \"enviar\"};\n        for (int i = 0; i < tareas.length; i++) {\n            informe.append(String.format(\"%d. %s\\n\", i + 1, tareas[i]));\n        }\n        System.out.print(informe.toString());\n        System.out.printf(\"total de tareas: %d%n\", tareas.length);\n        System.out.printf(\"media: %.2f%n\", 2.5);\n    }\n}\n",
+    "expected_output": "Informe de 2026\n----------------\n1. recoger\n2. revisar\n3. enviar\ntotal de tareas: 3\nmedia: 2.50",
+    "conceptos": [
+      "StringBuilder acumula texto con append sin crear cadenas intermedias.",
+      "append devuelve el mismo StringBuilder, así que se pueden encadenar.",
+      "String.format(\"%d. %s\", ...) rellena los huecos con los valores.",
+      "printf imprime con formato: %d entero, %s texto, %.2f double con dos decimales."
+    ],
+    "pistas": [
+      "El \\n dentro de una cadena es el salto de línea.",
+      "Usa print en vez de println para no añadir un salto extra al informe."
+    ],
+    "keywords": ["StringBuilder", "append", "String.format", "printf", "\\n"]
+  },
+  {
+    "id_nivel": "mision_25",
+    "title": "Boletín de Notas",
+    "dificultad": "Avanzado",
+    "modalidad": "Auditoría",
+    "briefing_mision": "El boletín declara la nota más alta pero muestra un valor que no es el máximo. Una sola instrucción está al revés: localízala.",
+    "init_code": "",
+    "audit_tokens": [
+      "public class Mision {",
+      "    public static void main(String[] args) {",
+      "        int[] notas = {5, 8, 2, 10};",
+      "        int suma = 0;",
+      "        int maxima = notas[0];",
+      "        for (int i = 0; i < notas.length; i++) {",
+      "            suma = suma + notas[i];",
+      "            if (notas[i] < maxima) {",
+      "                maxima = notas[i];",
+      "            }",
+      "        }",
+      "        System.out.println(\"suma \" + suma);",
+      "        System.out.println(\"maxima \" + maxima);",
+      "        System.out.println(\"media \" + (suma / notas.length));",
+      "    }",
+      "}"
+    ],
+    "token_error_index": 7,
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        int[] notas = {5, 8, 2, 10};\n        int suma = 0;\n        int maxima = notas[0];\n        for (int i = 0; i < notas.length; i++) {\n            suma = suma + notas[i];\n            if (notas[i] > maxima) {\n                maxima = notas[i];\n            }\n        }\n        System.out.println(\"suma \" + suma);\n        System.out.println(\"maxima \" + maxima);\n        System.out.println(\"media \" + (suma / notas.length));\n    }\n}\n",
+    "expected_output": "suma 25\nmaxima 10\nmedia 6",
+    "explicacion": "La comparación estaba invertida: con notas[i] < maxima la variable se queda siempre con la primera nota (5) en lugar de subir cuando aparece un valor mayor. Lo correcto es notas[i] > maxima, así la máxima termina en 10.",
+    "conceptos": [
+      "Para guardar el máximo hay que guardar el valor cuando es MAYOR que el actual.",
+      "maxima se inicializa con notas[0] para que el bucle tenga con qué comparar."
+    ],
+    "pistas": [
+      "La media y la suma son correctas: solo falla el valor de la máxima.",
+      "Fíjate en el signo de la comparación dentro del if."
+    ],
+    "keywords": ["if", "<", ">", "maxima", "notas[i]"]
+  },
+  {
+    "id_nivel": "mision_26",
+    "title": "Nómina del Equipo",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "Cada empleado cobra según su categoría. Crea la clase abstracta Empleado con el método abstracto salarioHora(), dos subclases que la implementan y un array que mezcle a ambos.",
+    "init_code": "public class Mision {\n    abstract static class Empleado {\n        String nombre;\n        int horas;\n        // constructor, metodo abstracto y nomina()\n    }\n\n    public static void main(String[] args) {\n        // array de empleados con dos categorias distintas\n    }\n}\n",
+    "solution_code": "public class Mision {\n    abstract static class Empleado {\n        String nombre;\n        int horas;\n        Empleado(String nombre, int horas) { this.nombre = nombre; this.horas = horas; }\n        abstract double salarioHora();\n        double nomina() { return salarioHora() * horas; }\n        String ficha() { return nombre + \" \" + nomina(); }\n    }\n\n    static class Junior extends Empleado {\n        Junior(String nombre, int horas) { super(nombre, horas); }\n        double salarioHora() { return 12.5; }\n    }\n\n    static class Senior extends Empleado {\n        Senior(String nombre, int horas) { super(nombre, horas); }\n        double salarioHora() { return 22.0; }\n    }\n\n    public static void main(String[] args) {\n        Empleado[] equipo = { new Junior(\"Ana\", 10), new Senior(\"Luis\", 8) };\n        for (Empleado e : equipo) {\n            System.out.println(e.ficha());\n        }\n    }\n}\n",
+    "expected_output": "Ana 125.0\nLuis 176.0",
+    "conceptos": [
+      "Una clase abstracta no se puede instanciar, pero sí usar como tipo.",
+      "abstract double salarioHora(); se implementa en cada subclase.",
+      "extends Empleado declara la herencia y super(...) inicializa la clase padre.",
+      "nomina() usa el método abstracto, así que cada objeto cobra su precio."
+    ],
+    "pistas": [
+      "El método abstracto se escribe sin llaves ni return.",
+      "El constructor de la subclase debe llamar a super(nombre, horas)."
+    ],
+    "keywords": ["abstract class", "extends", "super", "implements", "abstract"]
+  },
+  {
+    "id_nivel": "mision_27",
+    "title": "Caja Genérica",
+    "dificultad": "Avanzado",
+    "modalidad": "Terminal",
+    "briefing_mision": "El almacén de la guildia sirve igual para textos y para números. Crea la clase genérica Caja<T> con un valor, un contador de cambios y toString, y úsala con dos tipos distintos.",
+    "init_code": "public class Mision {\n    static class Caja<T> {\n        // campo de tipo T, contador y metodos\n    }\n\n    public static void main(String[] args) {\n        // una Caja<String> y una Caja<Integer>\n    }\n}\n",
+    "solution_code": "public class Mision {\n    static class Caja<T> {\n        private T valor;\n        private int veces;\n\n        Caja(T valor) { this.valor = valor; this.veces = 0; }\n\n        void guardar(T nuevo) { this.valor = nuevo; this.veces = this.veces + 1; }\n        T sacar() { return valor; }\n        int cambios() { return veces; }\n        public String toString() { return \"Caja(\" + valor + \")\"; }\n    }\n\n    public static void main(String[] args) {\n        Caja<String> textos = new Caja<>(\"vacio\");\n        textos.guardar(\"hola\");\n        textos.guardar(\"adios\");\n        System.out.println(textos);\n        System.out.println(textos.cambios());\n\n        Caja<Integer> numeros = new Caja<>(0);\n        numeros.guardar(42);\n        System.out.println(numeros.sacar() + 1);\n    }\n}\n",
+    "expected_output": "Caja(adios)\n2\n43",
+    "conceptos": [
+      "El parámetro de tipo T permite que la clase trabaje con cualquier tipo.",
+      "private oculta el campo para que solo se use dentro de la clase.",
+      "new Caja<>(\"vacio\") usa la inferencia de tipo del diamante.",
+      "toString() define cómo se muestra un objeto al imprimirlo."
+    ],
+    "pistas": [
+      "El campo es private T valor, y el contador private int veces.",
+      "guardar() suma 1 a veces, y cambios() devuelve ese contador."
+    ],
+    "keywords": ["class Caja<T>", "private", "T", "toString()", "new Caja<>(...)"]
+  },
+  {
+    "id_nivel": "mision_28",
+    "title": "Impresor de Líneas",
+    "dificultad": "Avanzado",
+    "modalidad": "Ensamblaje",
+    "briefing_mision": "El módulo de impresión llegó en piezas sueltas. Ordénalas para que el bucle añada tres líneas numeradas al StringBuilder y las muestre de golpe.",
+    "init_code": "",
+    "dnd_blocks": [
+      "public class Mision {",
+      "    public static void main(String[] args) {",
+      "        StringBuilder sb = new StringBuilder();",
+      "        for (int i = 1; i <= 3; i++) {",
+      "            sb.append(\"linea \");",
+      "            sb.append(i);",
+      "            sb.append(\"\\n\");",
+      "        }",
+      "        System.out.print(sb.toString());",
+      "    }",
+      "}"
+    ],
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        for (int i = 1; i <= 3; i++) {\n            sb.append(\"linea \");\n            sb.append(i);\n            sb.append(\"\\n\");\n        }\n        System.out.print(sb.toString());\n    }\n}\n",
+    "expected_output": "linea 1\nlinea 2\nlinea 3",
+    "conceptos": [
+      "El StringBuilder debe crearse antes del bucle.",
+      "append(\"linea \") escribe texto fijo y append(i) el número de la vuelta.",
+      "El salto de línea se añade al final de cada línea con \"\\n\".",
+      "print escribe el resultado sin añadir un salto extra."
+    ],
+    "pistas": [
+      "Las llaves del for encierran los tres append.",
+      "toString() convierte el StringBuilder en texto para poder imprimirlo."
+    ],
+    "keywords": ["StringBuilder", "append", "for", "\\n", "toString()"]
+  },
+  {
+    "id_nivel": "mision_29",
+    "title": "MCD y Dígitos",
+    "dificultad": "Experto",
+    "modalidad": "Terminal",
+    "briefing_mision": "Dos retos de recursión: el máximo común divisor por Euclides y la suma de los dígitos de un número. Cada función se llama a sí misma hasta llegar al caso base.",
+    "init_code": "public class Mision {\n    static int mcd(int a, int b) {\n        // caso base y llamada recursiva\n    }\n\n    public static void main(String[] args) {\n        // llama a las dos funciones\n    }\n}\n",
+    "solution_code": "public class Mision {\n    static int mcd(int a, int b) {\n        if (b == 0) {\n            return a;\n        }\n        return mcd(b, a % b);\n    }\n\n    static int sumaDigitos(int n) {\n        if (n == 0) {\n            return 0;\n        }\n        return n % 10 + sumaDigitos(n / 10);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(mcd(48, 18));\n        System.out.println(sumaDigitos(1234));\n    }\n}\n",
+    "expected_output": "6\n10",
+    "conceptos": [
+      "Una función recursiva se llama a sí misma con datos más pequeños.",
+      "El caso base corta la recursión y devuelve el resultado.",
+      "a % b y a / b con int division entera, sin decimales.",
+      "mcd(48, 18) va encogiendo el segundo número hasta llegar a 0."
+    ],
+    "pistas": [
+      "Si b vale 0, el máximo común divisor es a.",
+      "El último dígito de un número es n % 10 y el resto son las cifras n / 10."
+    ],
+    "keywords": ["static", "if", "return", "%", "/"]
+  },
+  {
+    "id_nivel": "mision_30",
+    "title": "Almacén Ordenado",
+    "dificultad": "Experto",
+    "modalidad": "Terminal",
+    "briefing_mision": "Las existencias están en un mapa artículo-cantidad, pero salen desordenadas. Pásalas a una lista, ordénalas por clave y localiza el artículo con más unidades.",
+    "init_code": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\npublic class Mision {\n    public static void main(String[] args) {\n        Map<String, Integer> almacen = new HashMap<>();\n        // carga tres articulos\n        // lista ordenada de claves\n    }\n}\n",
+    "solution_code": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\npublic class Mision {\n    public static void main(String[] args) {\n        Map<String, Integer> almacen = new HashMap<>();\n        almacen.put(\"arroz\", 3);\n        almacen.put(\"lentejas\", 7);\n        almacen.put(\"aceite\", 1);\n\n        List<String> claves = new ArrayList<>(almacen.keySet());\n        Collections.sort(claves);\n        for (String clave : claves) {\n            System.out.println(clave + \" x\" + almacen.get(clave));\n        }\n        System.out.println(\"total \" + almacen.size());\n        int maximo = 0;\n        String articulo = \"\";\n        for (String clave : claves) {\n            if (almacen.get(clave) > maximo) {\n                maximo = almacen.get(clave);\n                articulo = clave;\n            }\n        }\n        System.out.println(\"mayor \" + articulo + \" \" + maximo);\n    }\n}\n",
+    "expected_output": "aceite x1\narroz x3\nlentejas x7\ntotal 3\nmayor lentejas 7",
+    "conceptos": [
+      "Map<String, Integer> guarda pares clave-valor.",
+      "put(clave, valor) añade o reemplaza, get(clave) recupera el valor.",
+      "keySet() devuelve las claves, que se copian en una ArrayList para ordenarlas.",
+      "Collections.sort ordena la lista; un HashMap no mantiene el orden de inserción."
+    ],
+    "pistas": [
+      "Sin ordenar, el mapa devolvería las claves en otro orden.",
+      "size() da el número de artículos guardados."
+    ],
+    "keywords": ["Map", "HashMap", "ArrayList", "Collections.sort", "keySet()", "get"]
+  },
+  {
+    "id_nivel": "mision_31",
+    "title": "Lista de Debate",
+    "dificultad": "Experto",
+    "modalidad": "Auditoría",
+    "briefing_mision": "La lista de participantes imprime los nombres recortados: la primera letra desaparece en cada uno. Una sola instrucción está mal escrita.",
+    "init_code": "",
+    "audit_tokens": [
+      "public class Mision {",
+      "    public static void main(String[] args) {",
+      "        String nombres = \"Ana,Luis,Marta\";",
+      "        String[] partes = nombres.split(\",\");",
+      "        for (int i = 0; i < partes.length; i++) {",
+      "            String n = partes[i].trim();",
+      "            System.out.println((i + 1) + \". \" + n.toUpperCase());",
+      "        }",
+      "        System.out.println(\"total \" + partes.length);",
+      "    }",
+      "}"
+    ],
+    "token_error_index": 5,
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        String nombres = \"Ana,Luis,Marta\";\n        String[] partes = nombres.split(\",\");\n        for (int i = 0; i < partes.length; i++) {\n            String n = partes[i].trim().substring(1);\n            System.out.println((i + 1) + \". \" + n.toUpperCase());\n        }\n        System.out.println(\"total \" + partes.length);\n    }\n}\n",
+    "expected_output": "1. NA\n2. UIS\n3. ARTA\ntotal 3",
+    "explicacion": "substring(1) devuelve el texto desde la posición 1, es decir, sin la primera letra: Ana se convertía en NA. La solución usa solo trim(), que quita los espacios sobrantes y conserva el nombre entero.",
+    "conceptos": [
+      "substring(inicio) corta la cadena desde la posición indicada.",
+      "substring(0) devuelve la cadena completa, así que es un error común.",
+      "trim() elimina los espacios de los extremos y no toca las letras."
+    ],
+    "pistas": [
+      "El número de participantes y el total salen bien: solo falla el nombre.",
+      "Compara lo que imprime el código con lo que debería imprimir."
+    ],
+    "keywords": ["split", "trim()", "substring", "toUpperCase()"]
+  },
+  {
+    "id_nivel": "mision_32",
+    "title": "Cuadrilla de Agentes",
+    "dificultad": "Experto",
+    "modalidad": "Ensamblaje",
+    "briefing_mision": "El planificador reparte misiones entre los agentes, pero su programa se ha desmontado. Vuelve a colocar las piezas del mapa para mostrar el trabajo de cada agente y cuántos hay en total.",
+    "init_code": "",
+    "dnd_blocks": [
+      "public class Mision {",
+      "    public static void main(String[] args) {",
+      "        String[] agentes = {\"Ada\", \"Alan\"};",
+      "        java.util.Map<String, Integer> misiones = new java.util.HashMap<>();",
+      "        for (int i = 0; i < agentes.length; i++) {",
+      "            misiones.put(agentes[i], (i + 1) * 10);",
+      "        }",
+      "        for (String agente : agentes) {",
+      "            System.out.println(agente + \" -> \" + misiones.get(agente));",
+      "        }",
+      "        System.out.println(\"agentes \" + misiones.size());",
+      "    }",
+      "}"
+    ],
+    "solution_code": "public class Mision {\n    public static void main(String[] args) {\n        String[] agentes = {\"Ada\", \"Alan\"};\n        java.util.Map<String, Integer> misiones = new java.util.HashMap<>();\n        for (int i = 0; i < agentes.length; i++) {\n            misiones.put(agentes[i], (i + 1) * 10);\n        }\n        for (String agente : agentes) {\n            System.out.println(agente + \" -> \" + misiones.get(agente));\n        }\n        System.out.println(\"agentes \" + misiones.size());\n    }\n}\n",
+    "expected_output": "Ada -> 10\nAlan -> 20\nagentes 2",
+    "conceptos": [
+      "Un mapa con el nombre completo de la clase, java.util.HashMap, evita importar.",
+      "El primer bucle reparte las misiones del array y las guarda en el mapa.",
+      "El segundo bucle recorre los agentes y lee su misión con get.",
+      "size() devuelve cuántos agentes tienen misión asignada."
+    ],
+    "pistas": [
+      "El bucle que rellena el mapa va antes del que lo lee.",
+      "Cada agente recibe (i + 1) * 10 misiones, así que 10 y 20."
+    ],
+    "keywords": ["java.util.Map", "java.util.HashMap", "put", "get", "for", "size()"]
   }
 ];

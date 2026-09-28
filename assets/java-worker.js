@@ -1901,7 +1901,7 @@
 			exp: parseInt(s, 10)
 		};
 	}
-	function v(e) {
+	function g(e) {
 		if (Number.isNaN(e)) return "NaN";
 		if (e === 1 / 0) return "Infinity";
 		if (e === -1 / 0) return "-Infinity";
@@ -1915,11 +1915,11 @@
 		else r = `${n.length > 1 ? `${n[0]}.${n.slice(1)}` : `${n[0]}.0`}E${i}`;
 		return t ? `-${r}` : r;
 	}
-	function g(e) {
-		return Number.isFinite(e) ? 0x8000000000000000 === e ? "9223372036854775807" : -0x8000000000000000 === e ? "-9223372036854775808" : Number.isInteger(e) ? String(e) : v(e) : e > 0 ? "Infinity" : "-Infinity";
+	function v(e) {
+		return Number.isFinite(e) ? 0x8000000000000000 === e ? "9223372036854775807" : -0x8000000000000000 === e ? "-9223372036854775808" : Number.isInteger(e) ? String(e) : g(e) : e > 0 ? "Infinity" : "-Infinity";
 	}
 	function b(e, t = 10) {
-		if (10 === t) return g(e);
+		if (10 === t) return v(e);
 		if (e < 0) return "-" + b(-e, t);
 		if (0 === e) return "0";
 		let s = "", n = Math.floor(e);
@@ -2037,12 +2037,12 @@
 			return " ".repeat(t) + e;
 		})(f + u);
 	}
-	const T = /%(?<arg>\d+\$)?(?<flags>[-#+ 0,(]*)(?<width>\d+)?(?:\.(?<prec>\d+))?(?<conv>[a-zA-Z%n%])/g;
-	function C(e, t, s) {
+	const C = /%(?<arg>\d+\$)?(?<flags>[-#+ 0,(]*)(?<width>\d+)?(?:\.(?<prec>\d+))?(?<conv>[a-zA-Z%n%])/g;
+	function T(e, t, s) {
 		const n = s || ((e) => null == e ? "null" : String(e));
 		let i, r = "", a = 0, o = 0;
-		for (T.lastIndex = 0; null !== (i = T.exec(e));) {
-			r += e.slice(o, i.index), o = T.lastIndex;
+		for (C.lastIndex = 0; null !== (i = C.exec(e));) {
+			r += e.slice(o, i.index), o = C.lastIndex;
 			const s = i.groups;
 			if ("%" === s.conv) {
 				r += "%";
@@ -2181,7 +2181,7 @@
 			this.value = e;
 		}
 	};
-	const F = /* @__PURE__ */ new Set([
+	const B = /* @__PURE__ */ new Set([
 		"byte",
 		"short",
 		"int",
@@ -2189,7 +2189,7 @@
 		"float",
 		"double",
 		"char"
-	]), B = /* @__PURE__ */ new Set([
+	]), F = /* @__PURE__ */ new Set([
 		"byte",
 		"short",
 		"int",
@@ -2197,10 +2197,10 @@
 		"char"
 	]);
 	function K(e) {
-		return F.has(e);
+		return B.has(e);
 	}
 	function R(e) {
-		return B.has(e);
+		return F.has(e);
 	}
 	function D(e, t) {
 		return null == e ? "null" : "boolean" == typeof e ? e ? "true" : "false" : "string" == typeof e ? e : "number" == typeof e ? "char" === t ? x(e) : "float" === t ? function(e) {
@@ -2216,13 +2216,13 @@
 					break;
 				}
 			}
-			return v(null === t ? e : t);
-		}(e) : "double" === t ? v(e) : "long" === t ? g(e) : String(e) : null;
-	}
-	function V(e, t) {
-		return "double" === e || "double" === t ? "double" : "float" === e || "float" === t ? "float" : "long" === e || "long" === t ? "long" : "int";
+			return g(null === t ? e : t);
+		}(e) : "double" === t ? g(e) : "long" === t ? v(e) : String(e) : null;
 	}
 	function U(e, t) {
+		return "double" === e || "double" === t ? "double" : "float" === e || "float" === t ? "float" : "long" === e || "long" === t ? "long" : "int";
+	}
+	function V(e, t) {
 		if ("char" === t) return 65535 & Math.trunc(e);
 		const s = function(e) {
 			switch (e) {
@@ -2282,7 +2282,7 @@
 		const a = s("String", {});
 		a.natives.set("__construct/#", (t) => {
 			const s = t[0];
-			return null == s && e.throwJava("NullPointerException", "null"), B(s) && s.native && Array.isArray(s.native.elements) ? s.native.elements.map((e) => "number" == typeof e ? String.fromCharCode(e) : String(e)).join("") : String(s);
+			return null == s && e.throwJava("NullPointerException", "null"), F(s) && s.native && Array.isArray(s.native.elements) ? s.native.elements.map((e) => "number" == typeof e ? String.fromCharCode(e) : String(e)).join("") : String(s);
 		}), t.set("CharSequence", a);
 		const o = (e) => null === e[0] ? null : String(e[0]), l = (t, s = 0) => (null !== t[s] && void 0 !== t[s] || e.throwJava("NullPointerException", "null"), String(t[s])), c = (e, t) => "number" == typeof e[t] ? String.fromCharCode(e[t]) : l(e, t);
 		_(a, "length", 0, (e) => l(e).length), _(a, "isEmpty", 0, (e) => 0 === l(e).length), _(a, "isBlank", 0, (e) => 0 === l(e).trim().length), _(a, "charAt", 1, (t) => {
@@ -2303,7 +2303,7 @@
 		}), _(a, "replaceAll", 2, (e) => {
 			const t = W(l(e, 1)), s = l(e, 2).replace(/\$(\d)/g, "$$$1").replace(/\$\{(\d+)\}/g, "$$$1");
 			return l(e).replace(t, s);
-		}), _(a, "matches", 1, (e) => new RegExp(`^(?:${l(e, 1)})$`).test(l(e))), _(a, "split", 1, (e) => Z(l(e), l(e, 1), 0)), _(a, "split", 2, (e) => Z(l(e), l(e, 1), e[2])), _(a, "toString", 0, (e) => o(e) || "null"), _(a, "formatted", "#", (e, t) => C(o(e), e.slice(1), i(e.slice(1), t.types.slice(1)))), _(a, "valueOf", 1, (e, t) => n(e[0], t.types[0])), _(a, "format", "#", (e, t) => C(o(e), e.slice(1), i(e.slice(1), t.types.slice(1)))), _(a, "join", "#", (e, t) => {
+		}), _(a, "matches", 1, (e) => new RegExp(`^(?:${l(e, 1)})$`).test(l(e))), _(a, "split", 1, (e) => Z(l(e), l(e, 1), 0)), _(a, "split", 2, (e) => Z(l(e), l(e, 1), e[2])), _(a, "toString", 0, (e) => o(e) || "null"), _(a, "formatted", "#", (e, t) => T(o(e), e.slice(1), i(e.slice(1), t.types.slice(1)))), _(a, "valueOf", 1, (e, t) => n(e[0], t.types[0])), _(a, "format", "#", (e, t) => T(o(e), e.slice(1), i(e.slice(1), t.types.slice(1)))), _(a, "join", "#", (e, t) => {
 			const s = o(e), i = [];
 			for (let r = 1; r < e.length; r++) {
 				const a = e[r];
@@ -2335,15 +2335,15 @@
 		const u = s("Math", {});
 		J(u, "PI", "double", Math.PI), J(u, "E", "double", Math.E), J(u, "TAU", "double", 2 * Math.PI), _(u, "abs", 1, (e, t) => Math.abs(e[0])), _(u, "max", 2, (e, t) => e[0] > e[1] ? e[0] : e[1]), _(u, "min", 2, (e, t) => e[0] < e[1] ? e[0] : e[1]), _(u, "sqrt", 1, (e) => Math.sqrt(e[0])), _(u, "cbrt", 1, (e) => Math.cbrt(e[0])), _(u, "pow", 2, (e) => Math.pow(e[0], e[1])), _(u, "floor", 1, (e) => Math.floor(e[0])), _(u, "ceil", 1, (e) => Math.ceil(e[0])), _(u, "round", 1, (e) => Math.floor(e[0] + .5)), _(u, "signum", 1, (e) => e[0] > 0 ? 1 : e[0] < 0 ? -1 : 0), _(u, "log", 1, (e) => Math.log(e[0])), _(u, "log10", 1, (e) => Math.log10(e[0])), _(u, "exp", 1, (e) => Math.exp(e[0])), _(u, "sin", 1, (e) => Math.sin(e[0])), _(u, "cos", 1, (e) => Math.cos(e[0])), _(u, "tan", 1, (e) => Math.tan(e[0])), _(u, "atan", 1, (e) => Math.atan(e[0])), _(u, "atan2", 2, (e) => Math.atan2(e[0], e[1])), _(u, "hypot", 2, (e) => Math.hypot(e[0], e[1])), _(u, "random", 0, () => e.random()), _(u, "toIntExact", 1, (t) => (Number.isInteger(t[0]) || e.throwJava("ArithmeticException", "overflow"), t[0]));
 		const f = s("Integer", {});
-		t.set("Number", s("Number", {})), J(f, "MAX_VALUE", "int", 2147483647), J(f, "MIN_VALUE", "int", -2147483648), J(f, "BYTES", "int", 4), _(f, "parseInt", 1, (t) => X(e, t[0], "int")), _(f, "parseInt", 2, (t) => X(e, t[0], "int", t[1])), _(f, "valueOf", 1, (t) => X(e, t[0], "int")), _(f, "toString", 1, (e) => String(e[0])), _(f, "toString", 2, (e) => b(e[0], e[1])), _(f, "toBinaryString", 1, (e) => b(e[0], 2)), _(f, "toHexString", 1, (e) => b(e[0], 16)), _(f, "toOctalString", 1, (e) => b(e[0], 8)), _(f, "compare", 2, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(f, "sum", 2, (e) => U(e[0] + e[1], "int")), _(f, "max", 2, (e) => Math.max(e[0], e[1])), _(f, "min", 2, (e) => Math.min(e[0], e[1])), _(f, "intValue", 0, (e) => U(e[0], "int")), _(f, "toString", 0, (e, t) => D(e[0], t.types[0]));
+		t.set("Number", s("Number", {})), J(f, "MAX_VALUE", "int", 2147483647), J(f, "MIN_VALUE", "int", -2147483648), J(f, "BYTES", "int", 4), _(f, "parseInt", 1, (t) => X(e, t[0], "int")), _(f, "parseInt", 2, (t) => X(e, t[0], "int", t[1])), _(f, "valueOf", 1, (t) => X(e, t[0], "int")), _(f, "toString", 1, (e) => String(e[0])), _(f, "toString", 2, (e) => b(e[0], e[1])), _(f, "toBinaryString", 1, (e) => b(e[0], 2)), _(f, "toHexString", 1, (e) => b(e[0], 16)), _(f, "toOctalString", 1, (e) => b(e[0], 8)), _(f, "compare", 2, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(f, "sum", 2, (e) => V(e[0] + e[1], "int")), _(f, "max", 2, (e) => Math.max(e[0], e[1])), _(f, "min", 2, (e) => Math.min(e[0], e[1])), _(f, "intValue", 0, (e) => V(e[0], "int")), _(f, "toString", 0, (e, t) => D(e[0], t.types[0]));
 		const d = s("Long", {});
 		J(d, "MAX_VALUE", "long", 0x8000000000000000), J(d, "MIN_VALUE", "long", -0x8000000000000000), _(d, "parseLong", 1, (t) => X(e, t[0], "long")), _(d, "valueOf", 1, (t) => X(e, t[0], "long")), _(d, "toString", 1, (e) => String(e[0])), _(d, "toBinaryString", 1, (e) => b(e[0], 2)), _(d, "toHexString", 1, (e) => b(e[0], 16)), _(d, "compare", 2, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(d, "longValue", 0, (e) => e[0]);
 		const m = s("Double", {});
-		t.set("Float", s("Float", {})), J(m, "MAX_VALUE", "double", Number.MAX_VALUE), J(m, "MIN_VALUE", "double", Number.MIN_VALUE), J(m, "POSITIVE_INFINITY", "double", 1 / 0), J(m, "NEGATIVE_INFINITY", "double", -1 / 0), J(m, "NaN", "double", NaN), _(m, "parseDouble", 1, (t) => G(e, t[0])), _(m, "valueOf", 1, (t) => G(e, t[0])), _(m, "isNaN", 1, (e) => Number.isNaN(e[0])), _(m, "compare", 2, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(m, "doubleValue", 0, (e) => e[0]), _(m, "toString", 1, (e) => v(e[0]));
+		t.set("Float", s("Float", {})), J(m, "MAX_VALUE", "double", Number.MAX_VALUE), J(m, "MIN_VALUE", "double", Number.MIN_VALUE), J(m, "POSITIVE_INFINITY", "double", 1 / 0), J(m, "NEGATIVE_INFINITY", "double", -1 / 0), J(m, "NaN", "double", NaN), _(m, "parseDouble", 1, (t) => G(e, t[0])), _(m, "valueOf", 1, (t) => G(e, t[0])), _(m, "isNaN", 1, (e) => Number.isNaN(e[0])), _(m, "compare", 2, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(m, "doubleValue", 0, (e) => e[0]), _(m, "toString", 1, (e) => g(e[0]));
 		const y = t.get("Float");
-		_(y, "parseFloat", 1, (t) => Math.fround(G(e, t[0]))), _(y, "toString", 1, (e) => v(e[0]));
-		const g = s("Boolean", {});
-		J(g, "TRUE", "boolean", !0), J(g, "FALSE", "boolean", !1), _(g, "parseBoolean", 1, (e) => "true" === String(e[0]).toLowerCase()), _(g, "valueOf", 1, (e) => "true" === String(e[0]).toLowerCase()), _(g, "toString", 1, (e) => String(e[0])), _(g, "booleanValue", 0, (e) => Boolean(e[0])), _(g, "compare", 2, (e) => e[0] === e[1] ? 0 : e[0] ? 1 : -1);
+		_(y, "parseFloat", 1, (t) => Math.fround(G(e, t[0]))), _(y, "toString", 1, (e) => g(e[0]));
+		const v = s("Boolean", {});
+		J(v, "TRUE", "boolean", !0), J(v, "FALSE", "boolean", !1), _(v, "parseBoolean", 1, (e) => "true" === String(e[0]).toLowerCase()), _(v, "valueOf", 1, (e) => "true" === String(e[0]).toLowerCase()), _(v, "toString", 1, (e) => String(e[0])), _(v, "booleanValue", 0, (e) => Boolean(e[0])), _(v, "compare", 2, (e) => e[0] === e[1] ? 0 : e[0] ? 1 : -1);
 		const w = s("Character", {});
 		J(w, "MAX_VALUE", "char", 65535), J(w, "MIN_VALUE", "char", 0), _(w, "isDigit", 1, (e) => /[0-9]/.test(x(e[0]))), _(w, "isLetter", 1, (e) => /[A-Za-z]/.test(x(e[0]))), _(w, "isLetterOrDigit", 1, (e) => /[A-Za-z0-9]/.test(x(e[0]))), _(w, "isUpperCase", 1, (e) => /[A-Z]/.test(x(e[0]))), _(w, "isLowerCase", 1, (e) => /[a-z]/.test(x(e[0]))), _(w, "isWhitespace", 1, (e) => /\s/.test(x(e[0]))), _(w, "isAlphabetic", 1, (e) => /\p{L}/u.test(x(e[0]))), _(w, "toUpperCase", 1, (e) => x(e[0]).toUpperCase().charCodeAt(0)), _(w, "toLowerCase", 1, (e) => x(e[0]).toLowerCase().charCodeAt(0)), _(w, "charValue", 0, (e) => e[0]), _(w, "getNumericValue", 1, (e) => {
 			const t = x(e[0]);
@@ -2353,8 +2353,8 @@
 		S.superClass = k;
 		const O = s("Exception", {});
 		O.superClass = k;
-		const T = s("RuntimeException", {});
-		T.superClass = O;
+		const C = s("RuntimeException", {});
+		C.superClass = O;
 		const A = (e, t) => {
 			const n = s(e, {});
 			return n.superClass = t, n;
@@ -2364,14 +2364,14 @@
 				return void 0 !== t[0] && null !== t[0] && s.set("message", "String", String(t[0])), s;
 			});
 		};
-		for (const v of [
+		for (const g of [
 			k,
 			S,
 			O,
-			T
-		]) N(v);
-		A("IllegalArgumentException", T), A("IllegalStateException", T), A("NullPointerException", T), A("ArithmeticException", T), A("NumberFormatException", t.get("IllegalArgumentException")), A("IndexOutOfBoundsException", T), A("ArrayIndexOutOfBoundsException", t.get("IndexOutOfBoundsException")), A("StringIndexOutOfBoundsException", t.get("IndexOutOfBoundsException")), A("ClassCastException", T), A("UnsupportedOperationException", T), A("NegativeArraySizeException", T), A("NoSuchElementException", T), A("ClassNotFoundException", O), A("StackOverflowError", S), A("OutOfMemoryError", S);
-		for (const v of t.values()) v.isSubclassOf(k) && N(v);
+			C
+		]) N(g);
+		A("IllegalArgumentException", C), A("IllegalStateException", C), A("NullPointerException", C), A("ArithmeticException", C), A("NumberFormatException", t.get("IllegalArgumentException")), A("IndexOutOfBoundsException", C), A("ArrayIndexOutOfBoundsException", t.get("IndexOutOfBoundsException")), A("StringIndexOutOfBoundsException", t.get("IndexOutOfBoundsException")), A("ClassCastException", C), A("UnsupportedOperationException", C), A("NegativeArraySizeException", C), A("NoSuchElementException", C), A("ClassNotFoundException", O), A("StackOverflowError", S), A("OutOfMemoryError", S);
+		for (const g of t.values()) g.isSubclassOf(k) && N(g);
 		_(k, "getMessage", 0, (e) => {
 			const t = e[0] && e[0].fields ? e[0].fields.get("message") : null;
 			return t ? t.v : null;
@@ -2405,12 +2405,12 @@
 			if ("set" === t) for (const i of s) n.native.items.some((e) => K(e, i)) || n.native.items.push(i);
 			else n.native.items = s.slice();
 			return n;
-		}, j = (t) => (t && t.native || e.throwJava("NullPointerException", "no se puede usar una colecciÃ³n nula"), Array.isArray(t.native.items) || e.throwJava("NullPointerException", "no es una colecciÃ³n iterable"), t.native.items), F = (t) => (t && t.native && t.native.entries || e.throwJava("NullPointerException", "no es un mapa"), t.native.entries), B = (e) => e instanceof E, K = (e, t) => B(e) && B(t) ? e === t : e === t || String(e) === String(t), R = s("ArrayList", { kind: "class" }), V = s("List", { kind: "interface" });
-		R.interfaces = [V], V.superClass = r, t.set("List", V), t.set("ArrayList", R), t.set("LinkedList", R), R.natives.set("__construct/#", (e) => {
+		}, j = (t) => (t && t.native || e.throwJava("NullPointerException", "no se puede usar una colecciÃ³n nula"), Array.isArray(t.native.items) || e.throwJava("NullPointerException", "no es una colecciÃ³n iterable"), t.native.items), B = (t) => (t && t.native && t.native.entries || e.throwJava("NullPointerException", "no es un mapa"), t.native.entries), F = (e) => e instanceof E, K = (e, t) => F(e) && F(t) ? e === t : e === t || String(e) === String(t), R = s("ArrayList", { kind: "class" }), U = s("List", { kind: "interface" });
+		R.interfaces = [U], U.superClass = r, t.set("List", U), t.set("ArrayList", R), t.set("LinkedList", R), R.natives.set("__construct/#", (e) => {
 			const t = $(R, "list"), s = e && e[0];
 			return s && s.native && Array.isArray(s.native.items) ? t.native.items = s.native.items.slice() : s && s.native && Array.isArray(s.native.elements) && (t.native.items = s.native.elements.slice()), t;
-		}), V.natives.set("of/#", (e) => L(R, "list", e || [])), V.nativeReturns.set("of/#", "List");
-		for (let v = 1; v <= 2; v++) _(R, "add", v, (e) => (I(e[0]), 2 === v ? j(e[0]).splice(e[1], 0, e[2]) : j(e[0]).push(e[1]), 2 !== v || null));
+		}), U.natives.set("of/#", (e) => L(R, "list", e || [])), U.nativeReturns.set("of/#", "List");
+		for (let g = 1; g <= 2; g++) _(R, "add", g, (e) => (I(e[0]), 2 === g ? j(e[0]).splice(e[1], 0, e[2]) : j(e[0]).push(e[1]), 2 !== g || null));
 		R.natives.set("add/#", (e) => (I(e[0]), j(e[0]).push(e[1]), !0)), _(R, "get", 1, (t) => {
 			const s = j(t[0]), n = t[1];
 			return (n < 0 || n >= s.length) && e.throwJava("IndexOutOfBoundsException", `Index ${n} out of bounds for length ${s.length}`), s[n];
@@ -2470,36 +2470,36 @@
 		const te = s("Entry", { kind: "interface" });
 		te.interfaces = [ee], t.set("Entry", te), _(te, "getKey", 0, (e) => e[0].native.key), _(te, "getValue", 0, (e) => e[0].native.value), _(te, "setValue", 1, (e) => (e[0].native.value = e[1], null)), _(te, "toString", 0, (e) => `${D(e[0].native.key, null)}=${D(e[0].native.value, null)}`), z(te, "getKey", 0, "Object"), z(te, "getValue", 0, "Object");
 		Q.natives.set("__construct/#", (e) => $(Q, "map")), _(Q, "put", 2, (e) => {
-			const t = F(e[0]);
+			const t = B(e[0]);
 			for (const [s, n] of t) if (K(s, e[1])) return t.set(s, e[2]), void 0 === n ? null : n;
 			return t.set(e[1], e[2]), null;
 		}), _(Q, "get", 1, (e) => {
-			const t = F(e[0]);
+			const t = B(e[0]);
 			for (const [s, n] of t) if (K(s, e[1])) return n;
 			return null;
 		}), _(Q, "getOrDefault", 2, (e) => {
-			const t = F(e[0]);
+			const t = B(e[0]);
 			for (const [s, n] of t) if (K(s, e[1])) return n;
 			return e[2];
 		}), _(Q, "containsKey", 1, (e) => {
-			for (const t of F(e[0]).keys()) if (K(t, e[1])) return !0;
+			for (const t of B(e[0]).keys()) if (K(t, e[1])) return !0;
 			return !1;
 		}), _(Q, "containsValue", 1, (e) => {
-			for (const t of F(e[0]).values()) if (K(t, e[1])) return !0;
+			for (const t of B(e[0]).values()) if (K(t, e[1])) return !0;
 			return !1;
 		}), _(Q, "remove", 1, (e) => {
-			const t = F(e[0]);
+			const t = B(e[0]);
 			for (const [s, n] of t) if (K(s, e[1])) return t.delete(s), n;
 			return null;
-		}), _(Q, "size", 0, (e) => F(e[0]).size), _(Q, "isEmpty", 0, (e) => 0 === F(e[0]).size), _(Q, "clear", 0, (e) => (F(e[0]).clear(), null)), _(Q, "keySet", 0, (e) => {
+		}), _(Q, "size", 0, (e) => B(e[0]).size), _(Q, "isEmpty", 0, (e) => 0 === B(e[0]).size), _(Q, "clear", 0, (e) => (B(e[0]).clear(), null)), _(Q, "keySet", 0, (e) => {
 			const t = $(H, "set");
-			return t.native.items = [...F(e[0]).keys()], t;
+			return t.native.items = [...B(e[0]).keys()], t;
 		}), _(Q, "values", 0, (e) => {
 			const t = $(R, "list");
-			return t.native.items = [...F(e[0]).values()], t;
+			return t.native.items = [...B(e[0]).values()], t;
 		}), _(Q, "entrySet", 0, (e) => {
 			const t = $(H, "set");
-			return t.native.items = [...F(e[0])].map(([e, t]) => ((e, t) => {
+			return t.native.items = [...B(e[0])].map(([e, t]) => ((e, t) => {
 				const s = new E(te, {});
 				return s.native = {
 					kind: "entry",
@@ -2509,7 +2509,7 @@
 			})(e, t)), t;
 		}), _(Q, "toString", 0, (e) => ((e) => {
 			const t = [];
-			for (const [s, n] of F(e)) t.push(`${D(s, null)}=${null === n ? "null" : D(n, null)}`);
+			for (const [s, n] of B(e)) t.push(`${D(s, null)}=${null === n ? "null" : D(n, null)}`);
 			return "{" + t.join(", ") + "}";
 		})(e[0])), z(Q, "get", 1, "Object"), z(Q, "containsKey", 1, "boolean"), z(Q, "containsValue", 1, "boolean"), z(Q, "size", 0, "int"), z(Q, "isEmpty", 0, "boolean"), z(Q, "toString", 0, "String");
 		const se = s("Arrays", {}), ne = (e, t) => e < t ? -1 : e > t ? 1 : 0, ie = (t, s) => {
@@ -2556,18 +2556,18 @@
 			e.write(i.join(" ") + P);
 		};
 		_(ae, "println", 0, (e, t) => oe(e, t));
-		for (let v = 1; v <= 4; v++) _(ae, "println", v, (e, t) => oe(e, t));
+		for (let g = 1; g <= 4; g++) _(ae, "println", g, (e, t) => oe(e, t));
 		ae.natives.set("println/#", (e, t) => oe(e, t));
 		const le = (t, s) => {
 			const i = [];
 			for (let e = 0; e < t.length; e++) i.push(n(t[e], s.types[e]));
 			e.write(i.join(" "));
 		};
-		for (let v = 1; v <= 4; v++) _(ae, "print", v, (e, t) => le(e, t));
-		ae.natives.set("print/#", (e, t) => le(e, t)), ae.natives.set("printf/#", (t, s) => e.write(C(String(t[0]), t.slice(1), i(t.slice(1), (s.types || []).slice(1))))), _(ae, "write", 1, (t) => e.write(n(t[0], null))), _(ae, "flush", 0, () => {}), _(ae, "close", 0, () => {});
+		for (let g = 1; g <= 4; g++) _(ae, "print", g, (e, t) => le(e, t));
+		ae.natives.set("print/#", (e, t) => le(e, t)), ae.natives.set("printf/#", (t, s) => e.write(T(String(t[0]), t.slice(1), i(t.slice(1), (s.types || []).slice(1))))), _(ae, "write", 1, (t) => e.write(n(t[0], null))), _(ae, "flush", 0, () => {}), _(ae, "close", 0, () => {});
 		const ce = s("System", {}), he = new E(ae, {}), pe = new E(ae, {});
 		J(ce, "out", "PrintStream", he), J(ce, "err", "PrintStream", pe), J(ce, "in", "Object", null), _(ce, "currentTimeMillis", 0, () => 0), _(ce, "nanoTime", 0, () => 0), _(ce, "lineSeparator", 0, () => P), _(ce, "getProperty", 1, (e) => "line.separator" === e[0] ? P : null), _(ce, "exit", 0, () => {});
-		for (const [v, b] of [
+		for (const [g, b] of [
 			["Integer", "int"],
 			["Long", "long"],
 			["Double", "double"],
@@ -2575,11 +2575,11 @@
 			["Short", "short"],
 			["Byte", "byte"]
 		]) {
-			const e = t.get(v);
+			const e = t.get(g);
 			e && (_(e, "equals", 1, (e) => e[0] === e[1]), _(e, "compareTo", 1, (e) => e[0] < e[1] ? -1 : e[0] > e[1] ? 1 : 0), _(e, "toString", 0, (e, t) => D(e[0], t.types[0] || b)), _(e, "hashCode", 0, (e) => 0 | Math.trunc(e[0])));
 		}
 		t.get("Boolean").natives.set("equals/1", (e) => e[0] === e[1]), t.get("Boolean").natives.set("toString/0", (e) => String(e[0])), z(a, "length", 0, "int"), z(a, "charAt", 1, "char"), z(a, "indexOf", 1, "int"), z(a, "indexOf", 2, "int"), z(a, "lastIndexOf", 1, "int"), z(a, "compareTo", 1, "int"), z(a, "compareToIgnoreCase", 1, "int"), z(a, "hashCode", 0, "int"), z(a, "isEmpty", 0, "boolean"), z(a, "isBlank", 0, "boolean"), z(a, "contains", 1, "boolean"), z(a, "startsWith", 1, "boolean"), z(a, "endsWith", 1, "boolean"), z(a, "equals", 1, "boolean"), z(a, "equalsIgnoreCase", 1, "boolean"), z(a, "matches", 1, "boolean"), z(a, "split", 1, "String[]"), z(a, "split", 2, "String[]"), z(a, "substring", 1, "String"), z(a, "substring", 2, "String"), z(a, "toUpperCase", 0, "String"), z(a, "toLowerCase", 0, "String"), z(a, "trim", 0, "String"), z(a, "strip", 0, "String"), z(a, "stripLeading", 0, "String"), z(a, "stripTrailing", 0, "String"), z(a, "concat", 1, "String"), z(a, "repeat", 1, "String"), z(a, "replace", 2, "String"), z(a, "replaceAll", 2, "String"), z(a, "toString", 0, "String"), z(a, "valueOf", 1, "String"), z(a, "formatted", "#", "String"), z(a, "intern", 0, "String"), z(h, "toString", 0, "String"), z(h, "length", 0, "int"), z(h, "charAt", 1, "char"), z(h, "indexOf", 1, "int"), z(h, "append", "#", "StringBuilder"), z(h, "insert", 2, "StringBuilder"), z(h, "reverse", 0, "StringBuilder"), z(h, "deleteCharAt", 1, "StringBuilder"), z(h, "setLength", 1, "void");
-		for (const v of [
+		for (const g of [
 			"sqrt",
 			"cbrt",
 			"pow",
@@ -2595,8 +2595,8 @@
 			"atan2",
 			"hypot",
 			"random"
-		]) z(u, v, "#", "double");
-		return z(u, "round", 1, "long"), z(u, "rint", 1, "double"), z(u, "abs", 1, "int"), z(u, "max", 2, "int"), z(u, "min", 2, "int"), z(u, "signum", 1, "int"), z(u, "toIntExact", 1, "int"), z(u, "floorDiv", 2, "int"), z(u, "floorMod", 2, "int"), z(u, "addExact", 2, "int"), z(u, "subtractExact", 2, "int"), z(u, "multiplyExact", 2, "int"), z(f, "parseInt", 1, "int"), z(f, "parseInt", 2, "int"), z(f, "valueOf", 1, "Integer"), z(f, "toString", 1, "String"), z(f, "toBinaryString", 1, "String"), z(f, "toHexString", 1, "String"), z(f, "toOctalString", 1, "String"), z(f, "compare", 2, "int"), z(f, "sum", 2, "int"), z(f, "max", 2, "int"), z(f, "min", 2, "int"), z(f, "bitCount", 1, "int"), z(d, "parseLong", 1, "long"), z(d, "valueOf", 1, "Long"), z(d, "toString", 1, "String"), z(d, "toBinaryString", 1, "String"), z(d, "toHexString", 1, "String"), z(d, "compare", 2, "int"), z(d, "sum", 2, "long"), z(d, "max", 2, "long"), z(d, "min", 2, "long"), z(m, "parseDouble", 1, "double"), z(m, "valueOf", 1, "Double"), z(m, "isNaN", 1, "boolean"), z(m, "compare", 2, "int"), z(m, "toString", 1, "String"), z(m, "doubleToLongBits", 1, "long"), z(y, "parseFloat", 1, "float"), z(y, "toString", 1, "String"), z(g, "parseBoolean", 1, "boolean"), z(g, "valueOf", 1, "Boolean"), z(g, "toString", 1, "String"), z(g, "compare", 2, "int"), z(w, "isDigit", 1, "boolean"), z(w, "isLetter", 1, "boolean"), z(w, "isLetterOrDigit", 1, "boolean"), z(w, "isUpperCase", 1, "boolean"), z(w, "isLowerCase", 1, "boolean"), z(w, "isWhitespace", 1, "boolean"), z(w, "isAlphabetic", 1, "boolean"), z(w, "toUpperCase", 1, "char"), z(w, "toLowerCase", 1, "char"), z(w, "charValue", 0, "char"), z(w, "getNumericValue", 1, "int"), z(w, "toString", 1, "String"), z(w, "compare", 2, "int"), z(w, "digit", 2, "int"), z(w, "forDigit", 2, "char"), z(k, "getMessage", 0, "String"), z(k, "getLocalizedMessage", 0, "String"), z(k, "toString", 0, "String"), z(k, "getCause", 0, "Throwable"), z(r, "toString", 0, "String"), z(r, "equals", 1, "boolean"), z(r, "hashCode", 0, "int"), {
+		]) z(u, g, "#", "double");
+		return z(u, "round", 1, "long"), z(u, "rint", 1, "double"), z(u, "abs", 1, "int"), z(u, "max", 2, "int"), z(u, "min", 2, "int"), z(u, "signum", 1, "int"), z(u, "toIntExact", 1, "int"), z(u, "floorDiv", 2, "int"), z(u, "floorMod", 2, "int"), z(u, "addExact", 2, "int"), z(u, "subtractExact", 2, "int"), z(u, "multiplyExact", 2, "int"), z(f, "parseInt", 1, "int"), z(f, "parseInt", 2, "int"), z(f, "valueOf", 1, "Integer"), z(f, "toString", 1, "String"), z(f, "toBinaryString", 1, "String"), z(f, "toHexString", 1, "String"), z(f, "toOctalString", 1, "String"), z(f, "compare", 2, "int"), z(f, "sum", 2, "int"), z(f, "max", 2, "int"), z(f, "min", 2, "int"), z(f, "bitCount", 1, "int"), z(d, "parseLong", 1, "long"), z(d, "valueOf", 1, "Long"), z(d, "toString", 1, "String"), z(d, "toBinaryString", 1, "String"), z(d, "toHexString", 1, "String"), z(d, "compare", 2, "int"), z(d, "sum", 2, "long"), z(d, "max", 2, "long"), z(d, "min", 2, "long"), z(m, "parseDouble", 1, "double"), z(m, "valueOf", 1, "Double"), z(m, "isNaN", 1, "boolean"), z(m, "compare", 2, "int"), z(m, "toString", 1, "String"), z(m, "doubleToLongBits", 1, "long"), z(y, "parseFloat", 1, "float"), z(y, "toString", 1, "String"), z(v, "parseBoolean", 1, "boolean"), z(v, "valueOf", 1, "Boolean"), z(v, "toString", 1, "String"), z(v, "compare", 2, "int"), z(w, "isDigit", 1, "boolean"), z(w, "isLetter", 1, "boolean"), z(w, "isLetterOrDigit", 1, "boolean"), z(w, "isUpperCase", 1, "boolean"), z(w, "isLowerCase", 1, "boolean"), z(w, "isWhitespace", 1, "boolean"), z(w, "isAlphabetic", 1, "boolean"), z(w, "toUpperCase", 1, "char"), z(w, "toLowerCase", 1, "char"), z(w, "charValue", 0, "char"), z(w, "getNumericValue", 1, "int"), z(w, "toString", 1, "String"), z(w, "compare", 2, "int"), z(w, "digit", 2, "int"), z(w, "forDigit", 2, "char"), z(k, "getMessage", 0, "String"), z(k, "getLocalizedMessage", 0, "String"), z(k, "toString", 0, "String"), z(k, "getCause", 0, "Throwable"), z(r, "toString", 0, "String"), z(r, "equals", 1, "boolean"), z(r, "hashCode", 0, "int"), {
 			classes: t,
 			exceptionClass: O,
 			objectClass: r,
@@ -3373,7 +3373,7 @@
 				const t = this.classes.get(s);
 				t && t !== e.cls && t.isFunctional && this.adoptLambda(e, t);
 			}
-			return s && s.endsWith("[]") && Array.isArray(e) && !A(e) ? this.arrayFrom(s.slice(0, -2), e) : s && "var" !== s && t !== s ? null == e ? null : s.endsWith("[]") ? Array.isArray(e) && !A(e) ? this.arrayFrom(s.slice(0, -2), e) : e : R(s) && "number" == typeof e ? U(e, s) : "double" !== s && "float" !== s || "number" != typeof e ? "boolean" === s && "boolean" == typeof e ? e : "String" === s && "char" === t && "number" == typeof e ? String.fromCharCode(e) : e : "float" === s ? Math.fround(e) : e : "number" == typeof e && R(s) ? U(e, s) : "number" == typeof e && "float" === s ? Math.fround(e) : e;
+			return s && s.endsWith("[]") && Array.isArray(e) && !A(e) ? this.arrayFrom(s.slice(0, -2), e) : s && "var" !== s && t !== s ? null == e ? null : s.endsWith("[]") ? Array.isArray(e) && !A(e) ? this.arrayFrom(s.slice(0, -2), e) : e : R(s) && "number" == typeof e ? V(e, s) : "double" !== s && "float" !== s || "number" != typeof e ? "boolean" === s && "boolean" == typeof e ? e : "String" === s && "char" === t && "number" == typeof e ? String.fromCharCode(e) : e : "float" === s ? Math.fround(e) : e : "number" == typeof e && R(s) ? V(e, s) : "number" == typeof e && "float" === s ? Math.fround(e) : e;
 		}
 		lookupField(e, t) {
 			let s = t.thisObj;
@@ -3501,6 +3501,10 @@
 					return this.invokeStatic(n.cls, e.name, i, s, e);
 				}
 			}
+			if (e.target && "Super" === e.target.type) {
+				const n = this.evalArgs(e.args, t, s);
+				return this.invokeOnThis(t, e.name, n, s, e);
+			}
 			let n = null, i = null;
 			if (e.target && (this.resolveStaticTarget(e.target, t) || (n = this.eval(e.target, t), i = this.inferType(e.target, t))), e.target && null === n && this.throwJava("NullPointerException", `No se puede invocar "${e.name}" porque la referencia es null`), null !== n) {
 				if (A(n)) {
@@ -3622,10 +3626,26 @@
 			const o = t.thisObj;
 			if (!o) throw new e(`cannot find symbol\n  symbol: method ${s}()`, a ? a.line : 0, a ? a.col : 0);
 			if ("super" === s || a.target && "Super" === a.target.type) {
-				const e = o.cls.superClass;
-				if (!e) throw new n("no hay superclase");
-				const t = this.pickMethod(e, s, i.length, r, !1);
-				return t ? this.invokeUserMethod(t, o, i, r, e) : this.invokeInstance(o, s, i, r, a);
+				const t = o.cls.superClass;
+				if (!t) throw new n("no hay superclase");
+				let l = t;
+				for (; l;) {
+					const e = this.pickMethod(l, s, i.length, r, !1);
+					if (e) return this.invokeUserMethod(e, o, i, r, l);
+					const t = this.nativeMethod(l, s, i.length);
+					if (t) return this.wrapNative(t([o, ...i], {
+						types: [l.name, ...r],
+						interp: this
+					}), l, s, i.length);
+					for (const n of l.interfaces || []) {
+						const e = this.pickMethod(n, s, i.length, r, !1);
+						if (e) return this.invokeUserMethod(e, o, i, r, n);
+					}
+					l = l.superClass;
+				}
+				const c = this.nativeMethod(this.classes.get("Object"), s, i.length);
+				if (c) return c([o, ...i], { types: [o.cls.name, ...r] });
+				throw new e(`cannot find symbol\n  symbol: method ${s}(${this.prettyTypes(r)})\n  location: class ${t.name}`, a ? a.line : 0, a ? a.col : 0);
 			}
 			return this.invokeInstance(o, s, i, r, a);
 		}
@@ -3846,10 +3866,10 @@
 			}
 			const s = this.eval(e.expr, t), i = this.inferType(e.expr, t);
 			switch (e.op) {
-				case "+": return this.coerce(s, i, V(i, "int"));
-				case "-": return this.coerce(-s, i, V(i, "int"));
+				case "+": return this.coerce(s, i, U(i, "int"));
+				case "-": return this.coerce(-s, i, U(i, "int"));
 				case "!": return !s;
-				case "~": return U(~Math.trunc(s), "long" === i ? "long" : "int");
+				case "~": return V(~Math.trunc(s), "long" === i ? "long" : "int");
 				default: throw new n(`operador unario no soportado: ${e.op}`);
 			}
 		}
@@ -3860,7 +3880,7 @@
 			const i = this.inferType(e.left, t), r = this.inferType(e.right, t), a = this.eval(e.left, t), o = this.eval(e.right, t);
 			if ("+" === s && ("String" === i || "String" === r)) return (D(a, i) ?? this.valueToString(a, i)) + (D(o, r) ?? this.valueToString(o, r));
 			if (Y.has(s)) {
-				const e = V(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
+				const e = U(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
 				switch (s) {
 					case "+": return this.coerce(t + n, e, e);
 					case "-": return this.coerce(t - n, e, e);
@@ -3870,7 +3890,7 @@
 				}
 			}
 			if (Q.has(s)) {
-				const e = V(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
+				const e = U(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
 				switch (s) {
 					case "<": return t < n;
 					case ">": return t > n;
@@ -3882,17 +3902,17 @@
 				this.checkEqualityTypes(i, r, s, e);
 				let t;
 				if (K(i) && K(r)) {
-					const e = V(i, r);
+					const e = U(i, r);
 					t = this.coerce(a, i, e) === this.coerce(o, r, e);
 				} else t = a === o;
 				return "==" === s ? t : !t;
 			}
 			if (te.has(s)) {
-				const e = V(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
+				const e = U(i, r), t = this.coerce(a, i, e), n = this.coerce(o, r, e);
 				return "&" === s ? this.coerce(t & n, e, e) : "|" === s ? this.coerce(t | n, e, e) : this.coerce(t ^ n, e, e);
 			}
 			if (se.has(s)) {
-				const e = Math.trunc(a), t = Math.trunc(o), n = V(i, "int");
+				const e = Math.trunc(a), t = Math.trunc(o), n = U(i, "int");
 				return "<<" === s ? this.coerce(e << t, n, n) : ">>" === s ? this.coerce(e >> t, n, n) : this.coerce(e >>> t, n, n);
 			}
 			throw new n(`operador binario no soportado: ${s}`);
@@ -3981,11 +4001,11 @@
 				return "Object" === n || !e || !s.cls || s.cls.isSubclassOf(e) || s.cls.isSubclassOf && e.isSubclassOf(s.cls) || e.isInterface || s.cls.isInterface || this.throwJava("ClassCastException", `class ${s.cls.name} cannot be cast to class ${n}`), s;
 			}
 			switch (n) {
-				case "int": return U(Math.trunc(s), "int");
+				case "int": return V(Math.trunc(s), "int");
 				case "long": return Math.trunc(s);
-				case "short": return U(s, "short");
-				case "byte": return U(s, "byte");
-				case "char": return U(s, "char");
+				case "short": return V(s, "short");
+				case "byte": return V(s, "byte");
+				case "char": return V(s, "char");
 				case "double":
 				case "float":
 				default: return s;
@@ -3993,16 +4013,19 @@
 				case "String": return "char" === i ? String.fromCharCode(s) : D(s, i);
 			}
 		}
+		wrapperClassOf(e, t) {
+			return "string" == typeof e ? this.classes.get("String") : "boolean" == typeof e ? this.classes.get("Boolean") : "number" != typeof e ? null : "double" === t || "float" === t || "Double" === t ? this.classes.get("Double") : "long" === t || "Long" === t ? this.classes.get("Long") : "char" === t || "Character" === t ? this.classes.get("Character") : this.classes.get(Number.isInteger(e) ? "Integer" : "Double");
+		}
 		evalInstanceOf(e, t) {
 			const s = this.eval(e.expr, t), n = this.typeLabel(e.targetType);
 			if (null === s) return !1;
-			if (A(s)) {
-				const i = this.classes.get(n);
-				if (!i) return !1;
-				const r = s.cls.isSubclassOf(i);
-				return r && e.binding && t.declare(e.binding, n, s), r;
-			}
-			return !1;
+			const i = this.classes.get(n);
+			if (!i) return !1;
+			const r = this.classes.get("Object");
+			let a;
+			if (a = A(s) ? s.cls : this.wrapperClassOf(s, this.inferType(e.expr, t)), !a) return !1;
+			const o = i === this.classes.get("Number") && a !== this.classes.get("String") && a !== this.classes.get("Boolean") && a !== this.classes.get("Character"), l = a.isSubclassOf(i) || i === r || o;
+			return l && e.binding && t.declare(e.binding, n, s), l;
 		}
 		iterate(e, t) {
 			if (null === e && this.throwJava("NullPointerException", "no se puede iterar un valor null"), A(e) && e.native && Array.isArray(e.native.elements)) return e.native.elements.slice();
@@ -4200,7 +4223,7 @@
 				case "ArrayInit":
 				case "SwitchExpr":
 				default: return "unknown";
-				case "Unary": return "!" === e.op ? "boolean" : "++" === e.op || "--" === e.op ? this.inferType(e.expr, t) : V(this.inferType(e.expr, t), "int");
+				case "Unary": return "!" === e.op ? "boolean" : "++" === e.op || "--" === e.op ? this.inferType(e.expr, t) : U(this.inferType(e.expr, t), "int");
 				case "Binary": {
 					if ([
 						"&&",
@@ -4213,7 +4236,7 @@
 						"!="
 					].includes(e.op)) return "boolean";
 					const s = this.inferType(e.left, t), n = this.inferType(e.right, t);
-					return "+" !== e.op || "String" !== s && "String" !== n ? V(s, n) : "String";
+					return "+" !== e.op || "String" !== s && "String" !== n ? U(s, n) : "String";
 				}
 				case "Assign": return e.op, this.inferType(e.target, t);
 				case "Ternary": return "unknown" !== this.inferType(e.then, t) ? this.inferType(e.then, t) : this.inferType(e.otherwise, t);

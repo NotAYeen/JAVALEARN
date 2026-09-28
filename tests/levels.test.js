@@ -4,8 +4,8 @@ import { normalizeOutput, compareOutput } from '../src/compare.js';
 import { runJava } from '../src/engine/interpreter.js';
 
 describe('Niveles JavaLearn', () => {
-    it('deben existir 18 niveles en la fase F1', () => {
-        expect(LEVELS).toHaveLength(18);
+    it('deben existir 32 niveles tras la fase F2', () => {
+        expect(LEVELS).toHaveLength(32);
     });
 
     it('deben tener ids únicos y consecutivos mision_XX', () => {
@@ -67,9 +67,20 @@ describe('Niveles JavaLearn', () => {
         }
     });
 
-    it('el ensamblaje debe traer piezas coherentes', () => {
-        for (const l of LEVELS.filter((x) => x.modalidad === 'Ensamblaje')) {
-            expect(l.solution_code).toBeTruthy();
+    it('el ensamblaje debe traer piezas coherentes y un programa ejecutable', () => {
+        const ens = LEVELS.filter((x) => x.modalidad === 'Ensamblaje');
+        expect(ens.length).toBeGreaterThan(0);
+        for (const l of ens) {
+            expect(Array.isArray(l.dnd_blocks), `${l.id_nivel}: sin dnd_blocks`).toBe(true);
+            expect(l.dnd_blocks.length, `${l.id_nivel}: máximo 14 piezas`).toBeLessThanOrEqual(14);
+            const solutionLines = l.solution_code.split('\n').filter((line) => line.trim());
+            expect(l.dnd_blocks.length, `${l.id_nivel}: piezas desalineadas con la solución`)
+                .toBe(solutionLines.length);
+            expect(l.dnd_blocks, `${l.id_nivel}: las piezas deben ser las líneas de la solución`)
+                .toEqual(solutionLines);
+            const res = runJava(l.dnd_blocks.join('\n'), { stepLimit: 20000000 });
+            expect(res.ok, `${l.id_nivel}: el programa ensamblado no compila`).toBe(true);
+            expect(normalizeOutput(res.stdout), `${l.id_nivel}: la salida ensamblada`).toBe(normalizeOutput(l.expected_output));
         }
     });
 
